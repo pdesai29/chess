@@ -1,0 +1,35 @@
+#chessBoard {
+  width: 800px;
+  height: 800px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.square {
+  height: 100px;
+  width: 100px;
+}
+
+.bgGreen {
+  background-color: #769656;
+}
+
+.bgSkin {
+  background-color: #eeeed2;
+}
+
+.square svg {
+  height: 70px;
+  width: 70px;
+  margin: 15px;
+}
+.whiteColor {
+  fill: white;
+  stroke: black;
+  stroke-width: 10px;
+}
+.blackColor {
+  fill: black;
+  stroke: black;
+  stroke-width: 10px;
+}
