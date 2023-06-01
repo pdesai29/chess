@@ -1,8 +1,14 @@
+body {
+  background-color: black;
+  display: flex;
+  flex-wrap: wrap;
+}
 #chessBoard {
   width: 800px;
   height: 800px;
   display: flex;
   flex-wrap: wrap;
+  border: solid black 10px;
 }
 
 .square {
@@ -32,4 +38,10 @@
   fill: black;
   stroke: black;
   stroke-width: 10px;
+}
+#moves {
+  background-color: darkgrey;
+  height: 800px;
+  width: 500px;
+  border: solid black 10px;
 }
