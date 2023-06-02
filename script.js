@@ -70,17 +70,25 @@ const startPosition = [
 ];
 
 function changePlayerTurn() {
-  // playerTurn==="black"? (playerTurn="white" reverseBoard()) : (playerTurn = "black");
   if (playerTurn === "black") {
     reverseBoard();
     playerTurn = "white";
+    changeCursor(playerTurn);
   } else if (playerTurn === "white") {
     revertBoard();
     playerTurn = "black";
+    changeCursor(playerTurn);
   }
+}
 
-  // document.querySelector("#turn").innerHTML = playerTurn;
-  // console.log(playerTurn);
+function changeCursor(color) {
+  if (color === "black") {
+    chessBoard.style.cursor = `url('data:image/svg+xml;utf8,${encodeURIComponent(
+      cursorB
+    )}'), auto`;
+  } else {
+    chessBoard.style.cursor = ``;
+  }
 }
 const setUpBoard = () => {
   const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
@@ -107,6 +115,7 @@ const setUpBoard = () => {
     if (square?.hasChildNodes()) {
       square.firstChild.setAttribute("draggable", true);
     }
+    changeCursor(playerTurn);
   });
 };
 setUpBoard();
@@ -166,52 +175,51 @@ function revertBoard() {
   });
 }
 function checkValidMove(target) {
-  const targetPositionId =
+  const targetId =
     Number(target.getAttribute("id")) ||
     Number(target.parentNode.getAttribute("id"));
-  const startPositionId = Number(startPositionId);
+  const startId = Number(startPositionId);
   const chessMan = draggedChessman.id.slice(0, draggedChessman.id.length - 1);
   switch (chessMan) {
     case "pawn":
-      return pawn(startPositionId, targetPositionId);
+      return pawn(startId, targetId);
     case "knight":
-      return knight(startPositionId, targetPositionId);
+      return knight(startId, targetId);
     case "bishop":
-      return bishop(startPositionId, targetPositionId);
+      return bishop(startId, targetId);
     case "rook":
-      return rook(startPositionId, targetPositionId);
+      return rook(startId, targetId);
+    case "queen":
+      return queen(startId, targetId);
+    case "king":
+      return king(startId, targetId);
   }
 }
-function pawn(startPositionId, targetPositionId) {
+function pawn(startId, targetId) {
   const starterRow = [8, 9, 10, 11, 12, 13, 14, 15];
   if (
-    (starterRow.includes(startPositionId) &&
-      startPositionId + width * 2 === targetPositionId) ||
-    startPositionId + width === targetPositionId ||
-    (startPositionId + width - 1 === targetPositionId &&
-      document
-        .getElementById(`${startPositionId + width - 1}`)
-        ?.hasChildNodes()) ||
-    (startPositionId + width + 1 === targetPositionId &&
-      document
-        .getElementById(`${startPositionId + width + 1}`)
-        ?.hasChildNodes())
+    (starterRow.includes(startId) && startId + width * 2 === targetId) ||
+    startId + width === targetId ||
+    (startId + width - 1 === targetId &&
+      document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
+    (startId + width + 1 === targetId &&
+      document.getElementById(`${startId + width + 1}`)?.hasChildNodes())
   ) {
     return true;
   } else {
     return false;
   }
 }
-function knight(startPositionId, targetPositionId) {
+function knight(startId, targetId) {
   if (
-    startPositionId + width * 2 - 1 === targetPositionId ||
-    startPositionId + width * 2 + 1 === targetPositionId ||
-    startPositionId + width - 2 === targetPositionId ||
-    startPositionId + width + 2 === targetPositionId ||
-    startPositionId - width * 2 - 1 === targetPositionId ||
-    startPositionId - width * 2 + 1 === targetPositionId ||
-    startPositionId - width - 2 === targetPositionId ||
-    startPositionId - width + 2 === targetPositionId
+    startId + width * 2 - 1 === targetId ||
+    startId + width * 2 + 1 === targetId ||
+    startId + width - 2 === targetId ||
+    startId + width + 2 === targetId ||
+    startId - width * 2 - 1 === targetId ||
+    startId - width * 2 + 1 === targetId ||
+    startId - width - 2 === targetId ||
+    startId - width + 2 === targetId
   ) {
     return true;
   } else {
@@ -219,289 +227,159 @@ function knight(startPositionId, targetPositionId) {
   }
 }
 
-function bishop(startPositionId, targetPositionId) {
-  console.log(startPositionId - width - 1);
+function bishop(startId, targetId) {
+  console.log(startId - width - 1);
   if (
-    startPositionId + width + 1 === targetPositionId ||
-    (startPositionId + width * 2 + 2 &&
+    startId + width + 1 === targetId ||
+    (startId + width * 2 + 2 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes()) ||
+    (startId + width * 3 + 3 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId + width + 1}`)
+        .getElementById(`${startId + width * 2 + 2}`)
         ?.hasChildNodes()) ||
-    (startPositionId + width * 3 + 3 &&
+    (startId + width * 4 + 4 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId + width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 + 2}`)
+        .getElementById(`${startId + width * 3 + 3}`)
         ?.hasChildNodes()) ||
-    (startPositionId + width * 4 + 4 &&
+    (startId + width * 5 + 5 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId + width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 + 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 3 + 3}`)
+        .getElementById(`${startId + width * 4 + 4}`)
         ?.hasChildNodes()) ||
-    (startPositionId + width * 5 + 5 &&
+    (startId + width * 6 + 6 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4 + 4}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId + width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 + 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 3 + 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 4 + 4}`)
+        .getElementById(`${startId + width * 5 + 5}`)
         ?.hasChildNodes()) ||
-    (startPositionId + width * 6 + 6 &&
+    (startId + width * 7 + 7 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4 + 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 5 + 5}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId + width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 + 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 3 + 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 4 + 4}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 5 + 5}`)
+        .getElementById(`${startId + width * 6 + 6}`)
         ?.hasChildNodes()) ||
-    (startPositionId + width * 7 + 7 &&
+    startId - width - 1 === targetId ||
+    (startId - width * 2 - 2 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes()) ||
+    (startId - width * 3 - 3 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId + width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 + 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 3 + 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 4 + 4}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 5 + 5}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 6 + 6}`)
+        .getElementById(`${startId - width * 2 - 2}`)
         ?.hasChildNodes()) ||
-    startPositionId - width - 1 === targetPositionId ||
-    (startPositionId - width * 2 - 2 &&
+    (startId - width * 4 - 4 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width - 1}`)
+        .getElementById(`${startId - width * 3 - 3}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 3 - 3 &&
+    (startId - width * 5 - 5 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 - 2}`)
+        .getElementById(`${startId - width * 4 - 4}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 4 - 4 &&
+    (startId - width * 6 - 6 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4 - 4}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 - 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 3 - 3}`)
+        .getElementById(`${startId - width * 5 - 5}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 5 - 5 &&
+    (startId - width * 7 - 7 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4 - 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 5 - 5}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 - 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 3 - 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 4 - 4}`)
+        .getElementById(`${startId - width * 6 - 6}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 6 - 6 &&
+    startId - width + 1 === targetId ||
+    (startId - width * 2 + 2 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes()) ||
+    (startId - width * 3 + 3 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 - 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 3 - 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 4 - 4}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 5 - 5}`)
+        .getElementById(`${startId - width * 2 + 2}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 7 - 7 &&
+    (startId - width * 4 + 4 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 - 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 3 - 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 4 - 4}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 5 - 5}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 6 - 6}`)
+        .getElementById(`${startId - width * 3 + 3}`)
         ?.hasChildNodes()) ||
-    startPositionId - width + 1 === targetPositionId ||
-    (startPositionId - width * 2 + 2 &&
+    (startId - width * 5 + 5 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 + 3}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width + 1}`)
+        .getElementById(`${startId - width * 4 + 4}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 3 + 3 &&
+    (startId - width * 6 + 6 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4 + 4}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 + 2}`)
+        .getElementById(`${startId - width * 5 + 5}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 4 + 4 &&
+    (startId - width * 7 + 7 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4 + 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 5 + 5}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 + 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 3 + 3}`)
+        .getElementById(`${startId - width * 6 + 6}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 5 + 5 &&
+    startId + width - 1 === targetId ||
+    (startId + width * 2 - 2 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
+    (startId + width * 3 - 3 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 + 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 3 + 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 4 + 4}`)
+        .getElementById(`${startId + width * 2 - 2}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 6 + 6 &&
+    (startId + width * 4 - 4 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 + 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 3 + 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 4 + 4}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 5 + 5}`)
+        .getElementById(`${startId + width * 3 - 3}`)
         ?.hasChildNodes()) ||
-    (startPositionId - width * 7 + 7 &&
+    (startId + width * 5 - 5 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId - width + 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 2 + 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 3 - 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 4 + 4}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 5 + 5}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId - width * 6 + 6}`)
+        .getElementById(`${startId + width * 4 - 4}`)
         ?.hasChildNodes()) ||
-    startPositionId + width - 1 === targetPositionId ||
-    (startPositionId + width * 2 - 2 &&
+    (startId + width * 6 - 6 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4 - 4}`)?.hasChildNodes() &&
       !document
-        .getElementById(`${startPositionId + width - 1}`)
+        .getElementById(`${startId + width * 5 - 5}`)
         ?.hasChildNodes()) ||
-    (startPositionId + width * 3 - 3 &&
-      !document
-        .getElementById(`${startPositionId + width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 - 2}`)
-        ?.hasChildNodes()) ||
-    (startPositionId + width * 4 - 4 &&
-      !document
-        .getElementById(`${startPositionId + width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 - 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 3 - 3}`)
-        ?.hasChildNodes()) ||
-    (startPositionId + width * 5 - 5 &&
-      !document
-        .getElementById(`${startPositionId + width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 - 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 3 - 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 4 - 4}`)
-        ?.hasChildNodes()) ||
-    (startPositionId + width * 6 - 6 &&
-      !document
-        .getElementById(`${startPositionId + width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 - 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 3 - 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 4 - 4}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 5 - 5}`)
-        ?.hasChildNodes()) ||
-    (startPositionId + width * 7 - 7 &&
-      !document
-        .getElementById(`${startPositionId + width - 1}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 2 - 2}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 3 - 3}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 4 - 4}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 5 - 5}`)
-        ?.hasChildNodes() &&
-      !document
-        .getElementById(`${startPositionId + width * 6 - 6}`)
-        ?.hasChildNodes())
+    (startId + width * 7 - 7 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4 - 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 5 - 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 6 - 6}`)?.hasChildNodes())
   ) {
     return true;
   } else {
@@ -509,4 +387,410 @@ function bishop(startPositionId, targetPositionId) {
   }
 }
 
-function rook(startPositionId, targetPositionId) {}
+function rook(startId, targetId) {
+  if (
+    startId + width === targetId ||
+    (startId + width * 2 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes()) ||
+    (startId + width * 3 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes()) ||
+    (startId + width * 4 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes()) ||
+    (startId + width * 5 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes()) ||
+    (startId + width * 6 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 5}`)?.hasChildNodes()) ||
+    (startId + width * 7 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 6}`)?.hasChildNodes()) ||
+    startId - width === targetId ||
+    (startId - width * 2 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes()) ||
+    (startId - width * 3 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes()) ||
+    (startId - width * 4 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes()) ||
+    (startId - width * 5 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes()) ||
+    (startId - width * 6 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 5}`)?.hasChildNodes()) ||
+    (startId - width * 7 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 6}`)?.hasChildNodes()) ||
+    startId + 1 === targetId ||
+    (startId + 2 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes()) ||
+    (startId + 3 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes()) ||
+    (startId + 4 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 3}`)?.hasChildNodes()) ||
+    (startId + 5 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 4}`)?.hasChildNodes()) ||
+    (startId + 6 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 5}`)?.hasChildNodes()) ||
+    (startId + 7 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 6}`)?.hasChildNodes()) ||
+    startId - 1 === targetId ||
+    (startId - 2 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes()) ||
+    (startId - 3 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes()) ||
+    (startId - 4 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 3}`)?.hasChildNodes()) ||
+    (startId - 5 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 4}`)?.hasChildNodes()) ||
+    (startId - 6 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 5}`)?.hasChildNodes()) ||
+    (startId - 7 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 6}`)?.hasChildNodes())
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function queen(startId, targetId) {
+  if (
+    startId + width === targetId ||
+    (startId + width * 2 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes()) ||
+    (startId + width * 3 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes()) ||
+    (startId + width * 4 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes()) ||
+    (startId + width * 5 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes()) ||
+    (startId + width * 6 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 5}`)?.hasChildNodes()) ||
+    (startId + width * 7 === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 6}`)?.hasChildNodes()) ||
+    startId - width === targetId ||
+    (startId - width * 2 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes()) ||
+    (startId - width * 3 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes()) ||
+    (startId - width * 4 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes()) ||
+    (startId - width * 5 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes()) ||
+    (startId - width * 6 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 5}`)?.hasChildNodes()) ||
+    (startId - width * 7 === targetId &&
+      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 6}`)?.hasChildNodes()) ||
+    startId + 1 === targetId ||
+    (startId + 2 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes()) ||
+    (startId + 3 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes()) ||
+    (startId + 4 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 3}`)?.hasChildNodes()) ||
+    (startId + 5 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 4}`)?.hasChildNodes()) ||
+    (startId + 6 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 5}`)?.hasChildNodes()) ||
+    (startId + 7 === targetId &&
+      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + 6}`)?.hasChildNodes()) ||
+    startId - 1 === targetId ||
+    (startId - 2 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes()) ||
+    (startId - 3 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes()) ||
+    (startId - 4 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 3}`)?.hasChildNodes()) ||
+    (startId - 5 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 4}`)?.hasChildNodes()) ||
+    (startId - 6 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 5}`)?.hasChildNodes()) ||
+    (startId - 7 === targetId &&
+      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - 6}`)?.hasChildNodes()) ||
+    startId + width + 1 === targetId ||
+    (startId + width * 2 + 2 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes()) ||
+    (startId + width * 3 + 3 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId + width * 2 + 2}`)
+        ?.hasChildNodes()) ||
+    (startId + width * 4 + 4 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId + width * 3 + 3}`)
+        ?.hasChildNodes()) ||
+    (startId + width * 5 + 5 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId + width * 4 + 4}`)
+        ?.hasChildNodes()) ||
+    (startId + width * 6 + 6 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4 + 4}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId + width * 5 + 5}`)
+        ?.hasChildNodes()) ||
+    (startId + width * 7 + 7 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4 + 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 5 + 5}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId + width * 6 + 6}`)
+        ?.hasChildNodes()) ||
+    startId - width - 1 === targetId ||
+    (startId - width * 2 - 2 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes()) ||
+    (startId - width * 3 - 3 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 2 - 2}`)
+        ?.hasChildNodes()) ||
+    (startId - width * 4 - 4 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 3 - 3}`)
+        ?.hasChildNodes()) ||
+    (startId - width * 5 - 5 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 4 - 4}`)
+        ?.hasChildNodes()) ||
+    (startId - width * 6 - 6 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4 - 4}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 5 - 5}`)
+        ?.hasChildNodes()) ||
+    (startId - width * 7 - 7 === targetId &&
+      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4 - 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 5 - 5}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 6 - 6}`)
+        ?.hasChildNodes()) ||
+    startId - width + 1 === targetId ||
+    (startId - width * 2 + 2 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes()) ||
+    (startId - width * 3 + 3 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 2 + 2}`)
+        ?.hasChildNodes()) ||
+    (startId - width * 4 + 4 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 3 + 3}`)
+        ?.hasChildNodes()) ||
+    (startId - width * 5 + 5 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 + 3}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 4 + 4}`)
+        ?.hasChildNodes()) ||
+    (startId - width * 6 + 6 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 + 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4 + 4}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 5 + 5}`)
+        ?.hasChildNodes()) ||
+    (startId - width * 7 + 7 === targetId &&
+      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 4 + 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId - width * 5 + 5}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId - width * 6 + 6}`)
+        ?.hasChildNodes()) ||
+    startId + width - 1 === targetId ||
+    (startId + width * 2 - 2 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
+    (startId + width * 3 - 3 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId + width * 2 - 2}`)
+        ?.hasChildNodes()) ||
+    (startId + width * 4 - 4 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId + width * 3 - 3}`)
+        ?.hasChildNodes()) ||
+    (startId + width * 5 - 5 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId + width * 4 - 4}`)
+        ?.hasChildNodes()) ||
+    (startId + width * 6 - 6 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4 - 4}`)?.hasChildNodes() &&
+      !document
+        .getElementById(`${startId + width * 5 - 5}`)
+        ?.hasChildNodes()) ||
+    (startId + width * 7 - 7 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 4 - 4}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 5 - 5}`)?.hasChildNodes() &&
+      !document.getElementById(`${startId + width * 6 - 6}`)?.hasChildNodes())
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function king(startId, targetId) {
+  if (
+    startId + 1 === targetId ||
+    startId - 1 === targetId ||
+    startId + width === targetId ||
+    startId - width === targetId ||
+    startId + width + 1 === targetId ||
+    startId + width - 1 === targetId ||
+    startId - width + 1 === targetId ||
+    startId - width - 1 === targetId
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
