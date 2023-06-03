@@ -2,7 +2,8 @@ const chessBoard = document.querySelector("#chessBoard");
 let playerTurn = "black";
 const movesDiv = document.querySelector("#moves");
 const width = 8;
-const moves = [];
+const movesObject = { moves: [], moveDetails: [] };
+
 const themes = document.querySelectorAll(".theme");
 let currentTheme = "greenTheme";
 const themesObject = {
@@ -102,10 +103,25 @@ function changePlayerTurn() {
     reverseBoard();
     playerTurn = "white";
     changeCursor(playerTurn);
+
+    const chessMan = document.querySelectorAll(".chessMan");
+    chessMan.forEach((chessMan) => {
+      chessMan.classList.remove("rotate");
+      chessMan.classList.add("rotateReverse");
+    });
+    chessBoard.classList.add("rotateReverse");
+    chessBoard.classList.remove("rotate");
   } else if (playerTurn === "white") {
     revertBoard();
     playerTurn = "black";
     changeCursor(playerTurn);
+    const chessMan = document.querySelectorAll(".chessMan");
+    chessMan.forEach((chessMan) => {
+      chessMan.classList.remove("rotateReverse");
+      chessMan.classList.add("rotate");
+    });
+    chessBoard.classList.remove("rotateReverse");
+    chessBoard.classList.add("rotate");
   }
 }
 
@@ -122,12 +138,14 @@ const setUpBoard = () => {
   const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
   const ranks = [1, 2, 3, 4, 5, 6, 7, 8];
   let countFile, row, squareString;
+  chessBoard.classList.add("rotate");
+
   startPosition.forEach((chessMan, i) => {
     const square = document.createElement("div");
     square.classList.add("square");
     row = Math.floor((63 - i) / 8) + 1;
     countFile = ((i + 1) % 8 !== 0 ? (i + 1) % 8 : 8) - 1;
-    squareString = `${ranks[row - 1]}${files[countFile]}`;
+    squareString = `${files[countFile]}${ranks[row - 1]}`;
     square.setAttribute("square-id", squareString);
     square.setAttribute("id", i);
 
@@ -143,6 +161,10 @@ const setUpBoard = () => {
       square.firstChild.setAttribute("draggable", true);
     }
     changeCursor(playerTurn);
+  });
+  const chessMan = document.querySelectorAll(".chessMan");
+  chessMan.forEach((chessMan) => {
+    chessMan.classList.add("rotate");
   });
 };
 setUpBoard();
@@ -200,6 +222,7 @@ function handleDrop(e) {
 }
 
 function moveDisplay(move, piece, deadPiece = "") {
+  let { moves } = movesObject;
   const deadPieceSvg = getPieceSvg(deadPiece);
   const pieceSvg = getPieceSvg(piece);
   let movesLength = moves.length;
@@ -322,14 +345,23 @@ function checkValidMove(target) {
   }
 }
 function pawn(startId, targetId) {
+  const lastMove = moves[moves.length - 1];
+  console.log(lastMove);
   const starterRow = [8, 9, 10, 11, 12, 13, 14, 15];
   if (
     (starterRow.includes(startId) && startId + width * 2 === targetId) ||
-    startId + width === targetId ||
+    (startId + width === targetId &&
+      !document.getElementById(`${startId + width}`)?.hasChildNodes()) ||
     (startId + width - 1 === targetId &&
       document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
     (startId + width + 1 === targetId &&
-      document.getElementById(`${startId + width + 1}`)?.hasChildNodes())
+      document.getElementById(`${startId + width + 1}`)?.hasChildNodes()) ||
+    (lastMove &&
+      lastMove.piece === "pawnW" &&
+      lastMove.startId === startId + width * 2 &&
+      lastMove.targetId === targetId &&
+      lastMove.targetId === startId + width &&
+      Math.floor(lastMove.targetId / width) === Math.floor(startId / width))
   ) {
     return true;
   } else {
