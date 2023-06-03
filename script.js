@@ -191,10 +191,25 @@ function handleDrop(e) {
   const taken = e.target.classList.contains("chessMan");
   const opponentTurn = playerTurn === "black" ? "white" : "black";
   const takenByOpponent = e.target.firstChild?.classList.contains(opponentTurn);
+  const targetId =
+    Number(e.target.getAttribute("id")) ||
+    Number(e.target.parentNode.getAttribute("id"));
+  const startId = Number(startPositionId);
+  addMoveDetails(
+    draggedChessman.getAttribute("id"),
+    e.target.getAttribute("id"),
+    startId,
+    targetId
+  );
   const validMove = checkValidMove(e.target);
+  if (!validMove) {
+    movesObject.moveDetails[movesObject.moveDetails.length - 1].pop();
+  }
   if (correctPlayerTurn) {
     if (takenByOpponent && validMove) {
       let move = `x${e.target.parentNode.getAttribute("square-id")}`;
+      let arr = movesObject.moveDetails[movesObject.moveDetails.length - 1];
+      arr[arr.length - 1][`move`] = move;
       moveDisplay(
         move,
         draggedChessman.getAttribute("id"),
@@ -205,28 +220,64 @@ function handleDrop(e) {
       changePlayerTurn();
       return;
     }
-    if (taken && !takenByOpponent) {
-      console.log("can't go here");
-      return;
-    }
+  }
+  if (taken && !takenByOpponent) {
+    console.log("can't go here");
+    return;
+  }
 
-    if (validMove) {
-      e.target.append(draggedChessman);
-      let move = `${e.target.getAttribute("square-id")}`;
-      moveDisplay(move, e.target.firstChild.getAttribute("id"));
+  if (validMove) {
+    e.target.append(draggedChessman);
+
+    if (validMove === "enPassant") {
+      const deadPieceSquare = document.getElementById(`${targetId - width}`);
+      const deadPiece = deadPieceSquare.querySelector(".chessMan");
+      deadPieceSquare.removeChild(deadPiece);
+      let move = `x${deadPieceSquare.getAttribute("square-id")}`;
+      let arr = movesObject.moveDetails[movesObject.moveDetails.length - 1];
+      arr[arr.length - 1][`move`] = move;
+      moveDisplay(
+        move,
+        e.target.firstChild.getAttribute("id"),
+        deadPiece.getAttribute("id")
+      );
       changePlayerTurn();
-
       return;
     }
+    let move = `${e.target.getAttribute("square-id")}`;
+    let arr = movesObject.moveDetails[movesObject.moveDetails.length - 1];
+    arr[arr.length - 1][`move`] = move;
+    moveDisplay(move, e.target.firstChild.getAttribute("id"));
+    changePlayerTurn();
+    return;
   }
 }
 
+function addMoveDetails(piece, deadPiece = "", startId, targetId) {
+  const { moveDetails } = movesObject;
+  let length = moveDetails.length;
+  if (!length) {
+    moveDetails.push([{ piece, deadPiece, startId, targetId }]);
+  } else {
+    if (moveDetails[length - 1].length < 2) {
+      // console.log("moveDetails[length - 1]", moveDetails[length - 1]);
+      // console.log("moveDetails", moveDetails);
+      moveDetails[length - 1].push({
+        piece,
+        deadPiece,
+        startId,
+        targetId,
+      });
+    } else {
+      moveDetails.push([{ piece, deadPiece, startId, targetId }]);
+    }
+  }
+}
 function moveDisplay(move, piece, deadPiece = "") {
   let { moves } = movesObject;
   const deadPieceSvg = getPieceSvg(deadPiece);
   const pieceSvg = getPieceSvg(piece);
   let movesLength = moves.length;
-
   if (deadPiece) {
     if (deadPiece.includes("W")) {
       const deadMenColumn = document.querySelector("#deadMenWhite");
@@ -345,8 +396,12 @@ function checkValidMove(target) {
   }
 }
 function pawn(startId, targetId) {
-  const lastMove = moves[moves.length - 1];
-  console.log(lastMove);
+  const { moveDetails } = movesObject;
+  let lastMove =
+    moveDetails[moveDetails.length - 1].length === 1
+      ? moveDetails[moveDetails.length - 1][0]
+      : moveDetails[moveDetails.length - 1][1];
+  console.log("lastMove", lastMove);
   const starterRow = [8, 9, 10, 11, 12, 13, 14, 15];
   if (
     (starterRow.includes(startId) && startId + width * 2 === targetId) ||
@@ -355,15 +410,33 @@ function pawn(startId, targetId) {
     (startId + width - 1 === targetId &&
       document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
     (startId + width + 1 === targetId &&
-      document.getElementById(`${startId + width + 1}`)?.hasChildNodes()) ||
-    (lastMove &&
-      lastMove.piece === "pawnW" &&
-      lastMove.startId === startId + width * 2 &&
-      lastMove.targetId === targetId &&
-      lastMove.targetId === startId + width &&
-      Math.floor(lastMove.targetId / width) === Math.floor(startId / width))
+      document.getElementById(`${startId + width + 1}`)?.hasChildNodes())
   ) {
     return true;
+  } else if (
+    (lastMove.piece === "pawnB" &&
+      starterRow.includes(lastMove.startId) &&
+      lastMove.startId + width * 2 === lastMove.targetId &&
+      (lastMove.targetId + 6 === startId ||
+        lastMove.targetId - 6 === startId)) ||
+    (startId + width - 1 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
+    (startId + width + 1 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes())
+  ) {
+    return "enPassant";
+  } else if (
+    (lastMove.piece === "pawnW" &&
+      starterRow.includes(lastMove.startId) &&
+      lastMove.startId + width * 2 === lastMove.targetId &&
+      (lastMove.targetId + 6 === startId ||
+        lastMove.targetId - 6 === startId)) ||
+    (startId + width - 1 === targetId &&
+      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
+    (startId + width + 1 === targetId &&
+      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes())
+  ) {
+    return "enPassant";
   } else {
     return false;
   }
