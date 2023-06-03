@@ -176,6 +176,22 @@ function moveDisplay(move, piece, deadPiece = "") {
   const deadPieceSvg = getPieceSvg(deadPiece);
   const pieceSvg = getPieceSvg(piece);
   let movesLength = moves.length;
+
+  if (deadPiece) {
+    if (deadPiece.includes("W")) {
+      const deadMenColumn = document.querySelector("#deadMenWhite");
+      let span = document.createElement("span");
+      span.innerHTML = deadPieceSvg;
+      deadMenColumn.append(span);
+      span.setAttribute("class", "deadMenSpan");
+    } else if (deadPiece.includes("B")) {
+      const deadMenColumn = document.querySelector("#deadMenBlack");
+      let span = document.createElement("span");
+      span.setAttribute("class", "deadMenSpan");
+      span.innerHTML = deadPieceSvg;
+      deadMenColumn.append(span);
+    }
+  }
   if (!movesLength) {
     moves.push([move]);
     movesLength = moves.length;

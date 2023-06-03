@@ -10,7 +10,7 @@ body {
   height: 800px;
   display: flex;
   flex-wrap: wrap;
-  border: solid #3d3b39 2px;
+  border: solid #5c5750 2px;
 }
 
 .square {
@@ -53,7 +53,7 @@ path {
   stroke-width: 10px;
 }
 #moves {
-  background-color: #272522;
+  background-color: #3d3b39;
   height: 800px;
   width: 500px;
   border: solid #3d3b39 2px;
@@ -71,6 +71,8 @@ p[moveRowId] {
   margin: 10px;
   display: flex;
   flex-wrap: wrap;
+  background-color: #5c5750;
+  border-radius: 5px;
 }
 span[moveMessageId] {
   padding: 5px;
@@ -92,4 +94,64 @@ span[moveMessageId] {
   width: 20px;
   stroke-width: 10px;
   position: relative;
+}
+
+@media (max-width: 768px) {
+  #chessBoard {
+    width: 600px;
+    height: 600px;
+  }
+  .square {
+    height: 75px;
+    width: 75px;
+    position: relative;
+  }
+  .square svg {
+    height: 55px;
+    width: 55px;
+    margin: 10px;
+    position: relative;
+    z-index: -9;
+  }
+  #moves {
+    height: 600px;
+    width: 300px;
+
+    border-radius: 10px;
+    margin-left: 20px;
+  }
+}
+#deadMenBlack {
+  height: 800px;
+  width: 40px;
+  background-color: #3d3b39;
+  border: solid #5c5750 2px;
+  border-radius: 10px;
+  border-radius: 5px 0px 0px 5px;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  overflow: auto;
+}
+
+#deadMenWhite {
+  height: 800px;
+  width: 40px;
+  background-color: #3d3b39;
+  border: solid #5c5750 2px;
+  border-radius: 0px 5px 5px 0px;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-direction: column-reverse;
+  overflow: auto;
+}
+
+.deadMenSpan {
+  margin: 5px;
+  padding: 5px;
 }
