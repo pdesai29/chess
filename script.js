@@ -3,6 +3,14 @@ let playerTurn = "black";
 const movesDiv = document.querySelector("#moves");
 const width = 8;
 const moves = [];
+const themes = document.querySelectorAll(".theme");
+let currentTheme = "greenTheme";
+const themesObject = {
+  greenTheme: ["bgGreen", "bgSkin"],
+  blueTheme: ["bgdBlue", "bglBlue"],
+  classicTheme: ["bgBlack", "bgWhite"],
+  pinkTheme: ["bgPink", "bgCream"],
+};
 const startPosition = [
   rookB,
   knightB,
@@ -69,7 +77,26 @@ const startPosition = [
   knightW,
   rookW,
 ];
-
+function addEventListenerTheme() {
+  themes.forEach((elem) => {
+    elem.addEventListener("click", changeTheme);
+  });
+}
+addEventListenerTheme();
+function changeTheme(e) {
+  const target = e.target.getAttribute("id");
+  const squares = document.querySelectorAll(".square");
+  squares.forEach((elem) => {
+    if (elem.classList.contains(themesObject[currentTheme][0])) {
+      elem.classList.remove(themesObject[currentTheme][0]);
+      elem.classList.add(themesObject[target + "Theme"][0]);
+    } else if (elem.classList.contains(themesObject[currentTheme][1])) {
+      elem.classList.remove(themesObject[currentTheme][1]);
+      elem.classList.add(themesObject[target + "Theme"][1]);
+    }
+  });
+  currentTheme = target + "Theme";
+}
 function changePlayerTurn() {
   if (playerTurn === "black") {
     reverseBoard();
