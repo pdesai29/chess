@@ -1,7 +1,8 @@
 const chessBoard = document.querySelector("#chessBoard");
 let playerTurn = "black";
+const movesDiv = document.querySelector("#moves");
 const width = 8;
-
+const moves = [];
 const startPosition = [
   rookB,
   knightB,
@@ -99,7 +100,7 @@ const setUpBoard = () => {
     square.classList.add("square");
     row = Math.floor((63 - i) / 8) + 1;
     countFile = ((i + 1) % 8 !== 0 ? (i + 1) % 8 : 8) - 1;
-    squareString = `${ranks[row - 1]}-${files[countFile]}`;
+    squareString = `${ranks[row - 1]}${files[countFile]}`;
     square.setAttribute("square-id", squareString);
     square.setAttribute("id", i);
 
@@ -110,7 +111,6 @@ const setUpBoard = () => {
     }
     square.innerHTML = chessMan;
     chessBoard.append(square);
-    // square.append(place);
 
     if (square?.hasChildNodes()) {
       square.firstChild.setAttribute("draggable", true);
@@ -143,9 +143,14 @@ function handleDrop(e) {
   const opponentTurn = playerTurn === "black" ? "white" : "black";
   const takenByOpponent = e.target.firstChild?.classList.contains(opponentTurn);
   const validMove = checkValidMove(e.target);
-  console.log(validMove);
   if (correctPlayerTurn) {
     if (takenByOpponent && validMove) {
+      let move = `x${e.target.parentNode.getAttribute("square-id")}`;
+      moveDisplay(
+        move,
+        draggedChessman.getAttribute("id"),
+        e.target.getAttribute("id")
+      );
       e.target.parentNode.append(draggedChessman);
       e.target.remove();
       changePlayerTurn();
@@ -155,11 +160,89 @@ function handleDrop(e) {
       console.log("can't go here");
       return;
     }
+
     if (validMove) {
       e.target.append(draggedChessman);
+      let move = `${e.target.getAttribute("square-id")}`;
+      moveDisplay(move, e.target.firstChild.getAttribute("id"));
       changePlayerTurn();
+
       return;
     }
+  }
+}
+
+function moveDisplay(move, piece, deadPiece = "") {
+  const deadPieceSvg = getPieceSvg(deadPiece);
+  const pieceSvg = getPieceSvg(piece);
+  let movesLength = moves.length;
+  if (!movesLength) {
+    moves.push([move]);
+    movesLength = moves.length;
+    const p = document.createElement("p");
+    p.setAttribute("moveRowId", movesLength);
+    const span = document.createElement("span");
+    span.innerHTML = `${movesLength}. ${pieceSvg}${
+      moves[movesLength - 1][0]
+    }   ${deadPieceSvg ? `[${deadPieceSvg}]` : ""}`;
+    span.setAttribute("moveMessageId", moves[movesLength - 1].length + 1);
+    p.append(span);
+    movesDiv.append(p);
+  } else {
+    if (moves[movesLength - 1].length < 2) {
+      moves[movesLength - 1].push(move);
+      movesLength = moves.length;
+      const p = document.querySelector(`p[moveRowId="${movesLength}"]`);
+      const span = document.createElement("span");
+      span.setAttribute("moveMessageId", moves[movesLength - 1].length + 1);
+      span.innerHTML = `, ${pieceSvg}${moves[movesLength - 1][1]}   ${
+        deadPieceSvg ? `   [${deadPieceSvg}]` : ""
+      }`;
+      p.append(span);
+    } else {
+      moves.push([move]);
+      movesLength = moves.length;
+      const p = document.createElement("p");
+      p.setAttribute("moveRowId", movesLength);
+      const span = document.createElement("span");
+      span.innerHTML = `${movesLength}. ${pieceSvg}${
+        moves[movesLength - 1][0]
+      }   ${deadPieceSvg ? `   [${deadPieceSvg}]` : ""}`;
+      span.setAttribute("moveMessageId", moves[movesLength - 1].length + 1);
+      p.append(span);
+      movesDiv.append(p);
+    }
+  }
+}
+
+function getPieceSvg(piece) {
+  switch (piece) {
+    case "rookB":
+      return moverookB;
+    case "knightB":
+      return moveknightB;
+    case "bishopB":
+      return movebishopB;
+    case "queenB":
+      return movequeenB;
+    case "kingB":
+      return movekingB;
+    case "pawnB":
+      return movepawnB;
+    case "rookW":
+      return moverookW;
+    case "knightW":
+      return moveknightW;
+    case "bishopW":
+      return movebishopW;
+    case "queenW":
+      return movequeenW;
+    case "kingW":
+      return movekingW;
+    case "pawnW":
+      return movepawnW;
+    default:
+      return null;
   }
 }
 function reverseBoard() {

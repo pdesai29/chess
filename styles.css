@@ -1,14 +1,16 @@
 body {
-  background-color: black;
+  background-color: #312e2b;
   display: flex;
   flex-wrap: wrap;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bolder;
 }
 #chessBoard {
   width: 800px;
   height: 800px;
   display: flex;
   flex-wrap: wrap;
-  border: solid black 10px;
+  border: solid #3d3b39 2px;
 }
 
 .square {
@@ -51,12 +53,43 @@ path {
   stroke-width: 10px;
 }
 #moves {
-  background-color: darkgrey;
+  background-color: #272522;
   height: 800px;
   width: 500px;
-  border: solid black 10px;
+  border: solid #3d3b39 2px;
+  overflow: auto;
+  border-radius: 10px;
+  margin-left: 20px;
 }
 .place {
   z-index: -1;
   color: red;
+}
+p[moveRowId] {
+  position: relative;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+span[moveMessageId] {
+  padding: 5px;
+  color: whitesmoke;
+}
+.moveBlackColor {
+  fill: black;
+  stroke: black;
+  height: 20px;
+  width: 20px;
+  stroke-width: 10px;
+  position: relative;
+}
+
+.moveWhiteColor {
+  fill: white;
+  stroke: black;
+  height: 20px;
+  width: 20px;
+  stroke-width: 10px;
+  position: relative;
 }
