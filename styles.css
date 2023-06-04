@@ -201,3 +201,25 @@ span[moveMessageId] {
   transform: rotate(0deg);
   transition: 500ms linear all;
 }
+.blackColorCursor {
+  fill: black;
+  border: 2px solid white;
+  stroke-width: 10px;
+}
+
+.possibleMove {
+  height: 50px;
+  width: 50px;
+  border-radius: 100%;
+  background-color: #b99d79;
+  border: solid black 3px;
+  margin: 15px;
+  position: relative;
+  z-index: 1;
+}
+.dead {
+  background-color: red;
+}
+.move {
+  background-color: #3e8e41;
+}
