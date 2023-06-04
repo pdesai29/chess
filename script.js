@@ -179,6 +179,15 @@ draggableSquares.forEach((element) => {
 
 function handleClick(e) {
   e.preventDefault();
+  const squares = document.getElementsByClassName("square");
+  for (const square of squares) {
+    if (square.classList.contains("move")) {
+      square.classList.remove("move");
+    }
+    if (square.classList.contains("dead")) {
+      square.classList.remove("dead");
+    }
+  }
   if (e.target.hasChildNodes()) {
     displayPossibleMoves(e.target);
   } else {
@@ -189,7 +198,15 @@ function handleClick(e) {
 let startPositionId, draggedChessman;
 
 function handleDragStart(e) {
-  console.log("hs", e.target);
+  const squares = document.getElementsByClassName("square");
+  for (const square of squares) {
+    if (square.classList.contains("move")) {
+      square.classList.remove("move");
+    }
+    if (square.classList.contains("dead")) {
+      square.classList.remove("dead");
+    }
+  }
   startPositionId = e.target.parentNode.getAttribute("id");
   draggedChessman = e.target;
 }
@@ -198,9 +215,6 @@ function handleDragOver(e) {
 }
 function handleDrop(e) {
   e.stopPropagation();
-  console.log("hd", e.target);
-  displayPossibleMoves(draggedChessman);
-
   const correctPlayerTurn =
     draggedChessman.firstChild.classList.contains(playerTurn);
   const taken = e.target.classList.contains("chessMan");
@@ -216,6 +230,16 @@ function handleDrop(e) {
     startId,
     targetId
   );
+  const squares = document.getElementsByClassName("square");
+  for (const square of squares) {
+    if (square.classList.contains("move")) {
+      square.classList.remove("move");
+    }
+    if (square.classList.contains("dead")) {
+      square.classList.remove("dead");
+    }
+  }
+
   const validMove = checkValidMove(e.target);
   // console.log(validMove);
   if (!validMove) {
@@ -306,8 +330,8 @@ function displayPossibleMoves(target) {
       return pawnPossibleMoves(startId);
     case "knight":
       return knightPossibleMoves(startId);
-    // case "bishop":
-    //   bishopPossibleMoves(startId);
+    case "bishop":
+      bishopPossibleMoves(startId);
     // case "rook":
     //   rookPossibleMoves(startId);
     // case "queen":
@@ -515,164 +539,48 @@ function knight(startId, targetId) {
     return false;
   }
 }
+
 function bishop(startId, targetId) {
-  console.log(startId - width - 1);
-  if (
-    startId + width + 1 === targetId ||
-    (startId + width * 2 + 2 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes()) ||
-    (startId + width * 3 + 3 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 2 + 2}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 4 + 4 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 3 + 3}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 5 + 5 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 4 + 4}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 6 + 6 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4 + 4}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 5 + 5}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 7 + 7 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4 + 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 5 + 5}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 6 + 6}`)
-        ?.hasChildNodes()) ||
-    startId - width - 1 === targetId ||
-    (startId - width * 2 - 2 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes()) ||
-    (startId - width * 3 - 3 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 2 - 2}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 4 - 4 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 3 - 3}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 5 - 5 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 4 - 4}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 6 - 6 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4 - 4}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 5 - 5}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 7 - 7 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4 - 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 5 - 5}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 6 - 6}`)
-        ?.hasChildNodes()) ||
-    startId - width + 1 === targetId ||
-    (startId - width * 2 + 2 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes()) ||
-    (startId - width * 3 + 3 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 2 + 2}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 4 + 4 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 3 + 3}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 5 + 5 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 + 3}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 4 + 4}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 6 + 6 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4 + 4}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 5 + 5}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 7 + 7 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4 + 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 5 + 5}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 6 + 6}`)
-        ?.hasChildNodes()) ||
-    startId + width - 1 === targetId ||
-    (startId + width * 2 - 2 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
-    (startId + width * 3 - 3 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 2 - 2}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 4 - 4 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 3 - 3}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 5 - 5 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 4 - 4}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 6 - 6 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4 - 4}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 5 - 5}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 7 - 7 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4 - 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 5 - 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 6 - 6}`)?.hasChildNodes())
-  ) {
+  //check if move is on diagonal or not
+  const dx = Math.abs((startId % width) - (targetId % width));
+  const dy = Math.abs(
+    Math.floor(startId / width) - Math.floor(targetId / width)
+  );
+
+  // console.log("startId", startId);
+  // console.log("targetId", targetId);
+  // console.log("dx", dx);
+  // console.log("dy", dy);
+
+  //if dx === dy means move is made on diagonal from startId
+  if (dx === dy) {
+    // stepX and stepY to find diagonal squares location
+    const stepX = targetId % width > startId % width ? 1 : -1;
+    const stepY =
+      Math.floor(targetId / width) > Math.floor(startId / width)
+        ? width
+        : -width;
+
+    //currentId is actual diagonal square "id"
+    let currentId = startId + stepX + stepY;
+    // console.log("stepX", stepX);
+    // console.log("stepY", stepY);
+
+    //check if other chessMan in path or not and
+    //continue checking all possible move square
+    while (currentId !== targetId) {
+      // console.log("currentId", currentId);
+      if (document.getElementById(`${currentId}`).hasChildNodes()) {
+        // console.log("false");
+        return false;
+      }
+      currentId += stepX + stepY;
+    }
+
     return true;
-  } else {
-    return false;
   }
+
+  return false;
 }
 
 function rook(startId, targetId) {
@@ -1141,11 +1049,6 @@ function pawnPossibleMoves(startId) {
   const isBlack = selectSquare.querySelector(".chessMan").id.includes("B");
 
   // // Remove all existing move and dead classes
-  // const squares = document.getElementsByClassName("chessSquare");
-  // for (const square of squares) {
-  //   square.classList.remove("move");
-  //   square.classList.remove("dead");
-  // }
 
   const starterRow = [8, 9, 10, 11, 12, 13, 14, 15];
 
@@ -1230,7 +1133,6 @@ function pawnPossibleMoves(startId) {
           .includes("W") &&
           playerTurn === "black")
       )
-        // leftCapture.classList.toggle("move");
         leftCapture.classList.toggle("dead");
     }
     if (rightCapture && rightCapture.hasChildNodes()) {
@@ -1246,8 +1148,169 @@ function pawnPossibleMoves(startId) {
           .includes("W") &&
           playerTurn === "black")
       )
-        // leftCapture.classList.toggle("move");
         rightCapture.classList.toggle("dead");
     }
   }
+}
+
+function bishopPossibleMoves(startId) {
+  const width = 8; // Assuming an 8x8 chessboard
+  const possibleMoves = [];
+  let dy, dx;
+  let possibleMoveId;
+  let currentId;
+  let targetId = 7;
+  let possibleMoveSquare;
+  currentId = startId + targetId;
+
+  while (currentId <= 63) {
+    currentId = startId + targetId;
+    dx = Math.abs((startId % width) - (currentId % width));
+    dy = Math.abs(Math.floor(startId / width) - Math.floor(currentId / width));
+    // console.log("dx", dx);
+    // console.log("dy", dy);
+    if (dy === dx) {
+      possibleMoveId = startId + targetId;
+      possibleMoveSquare = document.getElementById(`${possibleMoveId}`);
+      if (possibleMoveSquare?.hasChildNodes()) {
+        if (
+          (possibleMoveSquare
+            .querySelector(".chessMan")
+            .getAttribute("id")
+            .includes("B") &&
+            playerTurn === "white") ||
+          (possibleMoveSquare
+            .querySelector(".chessMan")
+            .getAttribute("id")
+            .includes("W") &&
+            playerTurn === "black")
+        ) {
+          possibleMoves.push(possibleMoveId);
+        }
+        break;
+      }
+      possibleMoves.push(possibleMoveId);
+    }
+    targetId += 7;
+  }
+  targetId = 9;
+  currentId = startId + targetId;
+
+  while (currentId <= 63) {
+    currentId = startId + targetId;
+
+    dx = Math.abs((startId % width) - (currentId % width));
+    dy = Math.abs(Math.floor(startId / width) - Math.floor(currentId / width));
+    if (dy === dx) {
+      possibleMoveId = startId + targetId;
+      possibleMoveSquare = document.getElementById(`${possibleMoveId}`);
+      if (possibleMoveSquare?.hasChildNodes()) {
+        if (
+          (possibleMoveSquare
+            .querySelector(".chessMan")
+            .getAttribute("id")
+            .includes("B") &&
+            playerTurn === "white") ||
+          (possibleMoveSquare
+            .querySelector(".chessMan")
+            .getAttribute("id")
+            .includes("W") &&
+            playerTurn === "black")
+        ) {
+          possibleMoves.push(possibleMoveId);
+        }
+        break;
+      }
+      possibleMoves.push(possibleMoveId);
+    }
+    targetId += 9;
+  }
+  targetId = -7;
+  currentId = startId + targetId;
+
+  while (currentId >= 0) {
+    currentId = startId + targetId;
+
+    dx = Math.abs((startId % width) - (currentId % width));
+    dy = Math.abs(Math.floor(startId / width) - Math.floor(currentId / width));
+    if (dy === dx) {
+      possibleMoveId = startId + targetId;
+      possibleMoveSquare = document.getElementById(`${possibleMoveId}`);
+      if (possibleMoveSquare?.hasChildNodes()) {
+        if (
+          (possibleMoveSquare
+            .querySelector(".chessMan")
+            .getAttribute("id")
+            .includes("B") &&
+            playerTurn === "white") ||
+          (possibleMoveSquare
+            .querySelector(".chessMan")
+            .getAttribute("id")
+            .includes("W") &&
+            playerTurn === "black")
+        ) {
+          possibleMoves.push(possibleMoveId);
+        }
+        break;
+      }
+      possibleMoves.push(possibleMoveId);
+    }
+    targetId += -7;
+  }
+  targetId = -9;
+  currentId = startId + targetId;
+
+  while (currentId >= 0) {
+    currentId = startId + targetId;
+
+    dx = Math.abs((startId % width) - (currentId % width));
+    dy = Math.abs(Math.floor(startId / width) - Math.floor(currentId / width));
+    if (dy === dx) {
+      possibleMoveId = startId + targetId;
+      possibleMoveSquare = document.getElementById(`${possibleMoveId}`);
+      if (possibleMoveSquare?.hasChildNodes()) {
+        if (
+          (possibleMoveSquare
+            .querySelector(".chessMan")
+            .getAttribute("id")
+            .includes("B") &&
+            playerTurn === "white") ||
+          (possibleMoveSquare
+            .querySelector(".chessMan")
+            .getAttribute("id")
+            .includes("W") &&
+            playerTurn === "black")
+        ) {
+          possibleMoves.push(possibleMoveId);
+        }
+        break;
+      }
+      possibleMoves.push(possibleMoveId);
+    }
+    targetId += -9;
+  }
+
+  // console.log(possibleMoves);
+  for (const move of possibleMoves) {
+    const selectSquare = document.getElementById(move);
+
+    if (selectSquare) {
+      const chessMan = selectSquare.querySelector(".chessMan");
+
+      if (chessMan) {
+        const chessManId = chessMan.getAttribute("id");
+
+        if (
+          (chessManId.includes("B") && playerTurn === "white") ||
+          (chessManId.includes("W") && playerTurn === "black")
+        ) {
+          selectSquare.classList.toggle("dead");
+        }
+      } else {
+        selectSquare.classList.toggle("move");
+      }
+    }
+  }
+
+  // return possibleMoves;
 }
