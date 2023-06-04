@@ -337,18 +337,21 @@ function displayPossibleMoves(target) {
   const chessMan = target
     .getAttribute("id")
     .slice(0, target.getAttribute("id").length - 1);
-
+  let possibleMoves;
   switch (chessMan) {
     case "pawn":
       return pawnPossibleMoves(startId);
     case "knight":
       return knightPossibleMoves(startId);
     case "bishop":
-      bishopPossibleMoves(startId);
+      possibleMoves = bishopPossibleMoves(startId);
+      renderMoves(possibleMoves);
     case "rook":
-      rookPossibleMoves(startId);
-    // case "queen":
-    //   queenPossibleMoves(startId);
+      possibleMoves = rookPossibleMoves(startId);
+      renderMoves(possibleMoves);
+    case "queen":
+      possibleMoves = queenPossibleMoves(startId);
+      renderMoves(possibleMoves);
     // case "king":
     //   kingPossibleMoves(startId);
   }
@@ -657,270 +660,7 @@ function rook(startId, targetId) {
 }
 
 function queen(startId, targetId) {
-  if (
-    startId + width === targetId ||
-    (startId + width * 2 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes()) ||
-    (startId + width * 3 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes()) ||
-    (startId + width * 4 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes()) ||
-    (startId + width * 5 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes()) ||
-    (startId + width * 6 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 5}`)?.hasChildNodes()) ||
-    (startId + width * 7 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 6}`)?.hasChildNodes()) ||
-    startId - width === targetId ||
-    (startId - width * 2 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes()) ||
-    (startId - width * 3 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes()) ||
-    (startId - width * 4 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes()) ||
-    (startId - width * 5 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes()) ||
-    (startId - width * 6 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 5}`)?.hasChildNodes()) ||
-    (startId - width * 7 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 6}`)?.hasChildNodes()) ||
-    startId + 1 === targetId ||
-    (startId + 2 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes()) ||
-    (startId + 3 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes()) ||
-    (startId + 4 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 3}`)?.hasChildNodes()) ||
-    (startId + 5 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 4}`)?.hasChildNodes()) ||
-    (startId + 6 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 5}`)?.hasChildNodes()) ||
-    (startId + 7 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 6}`)?.hasChildNodes()) ||
-    startId - 1 === targetId ||
-    (startId - 2 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes()) ||
-    (startId - 3 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes()) ||
-    (startId - 4 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 3}`)?.hasChildNodes()) ||
-    (startId - 5 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 4}`)?.hasChildNodes()) ||
-    (startId - 6 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 5}`)?.hasChildNodes()) ||
-    (startId - 7 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 6}`)?.hasChildNodes()) ||
-    startId + width + 1 === targetId ||
-    (startId + width * 2 + 2 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes()) ||
-    (startId + width * 3 + 3 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 2 + 2}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 4 + 4 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 3 + 3}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 5 + 5 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 4 + 4}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 6 + 6 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4 + 4}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 5 + 5}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 7 + 7 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4 + 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 5 + 5}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 6 + 6}`)
-        ?.hasChildNodes()) ||
-    startId - width - 1 === targetId ||
-    (startId - width * 2 - 2 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes()) ||
-    (startId - width * 3 - 3 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 2 - 2}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 4 - 4 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 3 - 3}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 5 - 5 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 4 - 4}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 6 - 6 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4 - 4}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 5 - 5}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 7 - 7 === targetId &&
-      !document.getElementById(`${startId - width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4 - 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 5 - 5}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 6 - 6}`)
-        ?.hasChildNodes()) ||
-    startId - width + 1 === targetId ||
-    (startId - width * 2 + 2 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes()) ||
-    (startId - width * 3 + 3 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 2 + 2}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 4 + 4 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 3 + 3}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 5 + 5 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 + 3}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 4 + 4}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 6 + 6 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4 + 4}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 5 + 5}`)
-        ?.hasChildNodes()) ||
-    (startId - width * 7 + 7 === targetId &&
-      !document.getElementById(`${startId - width + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2 + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4 + 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 5 + 5}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId - width * 6 + 6}`)
-        ?.hasChildNodes()) ||
-    startId + width - 1 === targetId ||
-    (startId + width * 2 - 2 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
-    (startId + width * 3 - 3 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 2 - 2}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 4 - 4 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 3 - 3}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 5 - 5 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 4 - 4}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 6 - 6 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4 - 4}`)?.hasChildNodes() &&
-      !document
-        .getElementById(`${startId + width * 5 - 5}`)
-        ?.hasChildNodes()) ||
-    (startId + width * 7 - 7 === targetId &&
-      !document.getElementById(`${startId + width - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2 - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3 - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4 - 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 5 - 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 6 - 6}`)?.hasChildNodes())
-  ) {
+  if (rook(startId, targetId) || bishop(startId, targetId)) {
     return true;
   } else {
     return false;
@@ -1141,26 +881,8 @@ function bishopPossibleMoves(startId) {
       currentId += direction;
     }
   }
-  for (const move of possibleMoves) {
-    const selectSquare = document.getElementById(move);
 
-    if (selectSquare) {
-      const chessMan = selectSquare.querySelector(".chessMan");
-
-      if (chessMan) {
-        const chessManId = chessMan.getAttribute("id");
-
-        if (
-          (chessManId.includes("B") && playerTurn === "white") ||
-          (chessManId.includes("W") && playerTurn === "black")
-        ) {
-          selectSquare.classList.toggle("dead");
-        }
-      } else {
-        selectSquare.classList.toggle("move");
-      }
-    }
-  }
+  return possibleMoves;
 }
 
 function rookPossibleMoves(startId) {
@@ -1171,6 +893,18 @@ function rookPossibleMoves(startId) {
       possibleMoves.push(targetId);
     }
   }
+
+  return possibleMoves;
+}
+function queenPossibleMoves(startId) {
+  const rookMoves = rookPossibleMoves(startId);
+  const bishopMoves = bishopPossibleMoves(startId);
+  const queenMoves = rookMoves.concat(bishopMoves);
+  console.log(queenMoves);
+  return queenMoves;
+}
+
+function renderMoves(possibleMoves) {
   for (const move of possibleMoves) {
     const selectSquare = document.getElementById(move);
 
