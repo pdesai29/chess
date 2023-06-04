@@ -176,16 +176,28 @@ draggableSquares.forEach((element) => {
   element.addEventListener("drop", handleDrop);
   element.addEventListener("click", handleClick);
 });
-
+let previousClick;
 function handleClick(e) {
   e.preventDefault();
+  console.log(e.target);
   const squares = document.getElementsByClassName("square");
-  for (const square of squares) {
-    if (square.classList.contains("move")) {
-      square.classList.remove("move");
+  if (e.target === previousClick) {
+    for (const square of squares) {
+      if (square.classList.contains("move")) {
+        square.classList.toggle(".move");
+      }
+      if (square.classList.contains("dead")) {
+        square.classList.toggle(".dead");
+      }
     }
-    if (square.classList.contains("dead")) {
-      square.classList.remove("dead");
+  } else {
+    for (const square of squares) {
+      if (square.classList.contains("move")) {
+        square.classList.remove("move");
+      }
+      if (square.classList.contains("dead")) {
+        square.classList.remove("dead");
+      }
     }
   }
   if (e.target.hasChildNodes()) {
@@ -193,6 +205,7 @@ function handleClick(e) {
   } else {
     return;
   }
+  previousClick = e.target;
 }
 
 let startPositionId, draggedChessman;
@@ -1154,143 +1167,41 @@ function pawnPossibleMoves(startId) {
 }
 
 function bishopPossibleMoves(startId) {
-  const width = 8; // Assuming an 8x8 chessboard
+  const width = 8;
   const possibleMoves = [];
-  let dy, dx;
-  let possibleMoveId;
-  let currentId;
-  let targetId = 7;
-  let possibleMoveSquare;
-  currentId = startId + targetId;
+  const directions = [7, 9, -7, -9];
+  for (const direction of directions) {
+    let currentId = startId + direction;
 
-  while (currentId <= 63) {
-    currentId = startId + targetId;
-    dx = Math.abs((startId % width) - (currentId % width));
-    dy = Math.abs(Math.floor(startId / width) - Math.floor(currentId / width));
-    // console.log("dx", dx);
-    // console.log("dy", dy);
-    if (dy === dx) {
-      possibleMoveId = startId + targetId;
-      possibleMoveSquare = document.getElementById(`${possibleMoveId}`);
-      if (possibleMoveSquare?.hasChildNodes()) {
-        if (
-          (possibleMoveSquare
+    while (currentId >= 0 && currentId <= 63) {
+      const dx = Math.abs((startId % width) - (currentId % width));
+      const dy = Math.abs(
+        Math.floor(startId / width) - Math.floor(currentId / width)
+      );
+
+      if (dy === dx) {
+        const possibleMoveSquare = document.getElementById(`${currentId}`);
+
+        if (possibleMoveSquare?.hasChildNodes()) {
+          const chessManId = possibleMoveSquare
             .querySelector(".chessMan")
-            .getAttribute("id")
-            .includes("B") &&
-            playerTurn === "white") ||
-          (possibleMoveSquare
-            .querySelector(".chessMan")
-            .getAttribute("id")
-            .includes("W") &&
-            playerTurn === "black")
-        ) {
-          possibleMoves.push(possibleMoveId);
+            .getAttribute("id");
+
+          if (
+            (chessManId.includes("B") && playerTurn === "white") ||
+            (chessManId.includes("W") && playerTurn === "black")
+          ) {
+            possibleMoves.push(currentId);
+          }
+          break;
         }
-        break;
+
+        possibleMoves.push(currentId);
       }
-      possibleMoves.push(possibleMoveId);
+
+      currentId += direction;
     }
-    targetId += 7;
   }
-  targetId = 9;
-  currentId = startId + targetId;
-
-  while (currentId <= 63) {
-    currentId = startId + targetId;
-
-    dx = Math.abs((startId % width) - (currentId % width));
-    dy = Math.abs(Math.floor(startId / width) - Math.floor(currentId / width));
-    if (dy === dx) {
-      possibleMoveId = startId + targetId;
-      possibleMoveSquare = document.getElementById(`${possibleMoveId}`);
-      if (possibleMoveSquare?.hasChildNodes()) {
-        if (
-          (possibleMoveSquare
-            .querySelector(".chessMan")
-            .getAttribute("id")
-            .includes("B") &&
-            playerTurn === "white") ||
-          (possibleMoveSquare
-            .querySelector(".chessMan")
-            .getAttribute("id")
-            .includes("W") &&
-            playerTurn === "black")
-        ) {
-          possibleMoves.push(possibleMoveId);
-        }
-        break;
-      }
-      possibleMoves.push(possibleMoveId);
-    }
-    targetId += 9;
-  }
-  targetId = -7;
-  currentId = startId + targetId;
-
-  while (currentId >= 0) {
-    currentId = startId + targetId;
-
-    dx = Math.abs((startId % width) - (currentId % width));
-    dy = Math.abs(Math.floor(startId / width) - Math.floor(currentId / width));
-    if (dy === dx) {
-      possibleMoveId = startId + targetId;
-      possibleMoveSquare = document.getElementById(`${possibleMoveId}`);
-      if (possibleMoveSquare?.hasChildNodes()) {
-        if (
-          (possibleMoveSquare
-            .querySelector(".chessMan")
-            .getAttribute("id")
-            .includes("B") &&
-            playerTurn === "white") ||
-          (possibleMoveSquare
-            .querySelector(".chessMan")
-            .getAttribute("id")
-            .includes("W") &&
-            playerTurn === "black")
-        ) {
-          possibleMoves.push(possibleMoveId);
-        }
-        break;
-      }
-      possibleMoves.push(possibleMoveId);
-    }
-    targetId += -7;
-  }
-  targetId = -9;
-  currentId = startId + targetId;
-
-  while (currentId >= 0) {
-    currentId = startId + targetId;
-
-    dx = Math.abs((startId % width) - (currentId % width));
-    dy = Math.abs(Math.floor(startId / width) - Math.floor(currentId / width));
-    if (dy === dx) {
-      possibleMoveId = startId + targetId;
-      possibleMoveSquare = document.getElementById(`${possibleMoveId}`);
-      if (possibleMoveSquare?.hasChildNodes()) {
-        if (
-          (possibleMoveSquare
-            .querySelector(".chessMan")
-            .getAttribute("id")
-            .includes("B") &&
-            playerTurn === "white") ||
-          (possibleMoveSquare
-            .querySelector(".chessMan")
-            .getAttribute("id")
-            .includes("W") &&
-            playerTurn === "black")
-        ) {
-          possibleMoves.push(possibleMoveId);
-        }
-        break;
-      }
-      possibleMoves.push(possibleMoveId);
-    }
-    targetId += -9;
-  }
-
-  // console.log(possibleMoves);
   for (const move of possibleMoves) {
     const selectSquare = document.getElementById(move);
 
@@ -1311,6 +1222,4 @@ function bishopPossibleMoves(startId) {
       }
     }
   }
-
-  // return possibleMoves;
 }
