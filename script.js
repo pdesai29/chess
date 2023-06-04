@@ -179,7 +179,7 @@ draggableSquares.forEach((element) => {
 let previousClick;
 function handleClick(e) {
   e.preventDefault();
-  console.log(e.target);
+
   const squares = document.getElementsByClassName("square");
   if (e.target === previousClick) {
     for (const square of squares) {
@@ -345,8 +345,8 @@ function displayPossibleMoves(target) {
       return knightPossibleMoves(startId);
     case "bishop":
       bishopPossibleMoves(startId);
-    // case "rook":
-    //   rookPossibleMoves(startId);
+    case "rook":
+      rookPossibleMoves(startId);
     // case "queen":
     //   queenPossibleMoves(startId);
     // case "king":
@@ -597,124 +597,63 @@ function bishop(startId, targetId) {
 }
 
 function rook(startId, targetId) {
-  if (
-    startId + width === targetId ||
-    (startId + width * 2 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes()) ||
-    (startId + width * 3 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes()) ||
-    (startId + width * 4 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes()) ||
-    (startId + width * 5 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes()) ||
-    (startId + width * 6 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 5}`)?.hasChildNodes()) ||
-    (startId + width * 7 === targetId &&
-      !document.getElementById(`${startId + width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + width * 6}`)?.hasChildNodes()) ||
-    startId - width === targetId ||
-    (startId - width * 2 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes()) ||
-    (startId - width * 3 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes()) ||
-    (startId - width * 4 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes()) ||
-    (startId - width * 5 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes()) ||
-    (startId - width * 6 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 5}`)?.hasChildNodes()) ||
-    (startId - width * 7 === targetId &&
-      !document.getElementById(`${startId - width}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - width * 6}`)?.hasChildNodes()) ||
-    startId + 1 === targetId ||
-    (startId + 2 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes()) ||
-    (startId + 3 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes()) ||
-    (startId + 4 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 3}`)?.hasChildNodes()) ||
-    (startId + 5 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 4}`)?.hasChildNodes()) ||
-    (startId + 6 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 5}`)?.hasChildNodes()) ||
-    (startId + 7 === targetId &&
-      !document.getElementById(`${startId + 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId + 6}`)?.hasChildNodes()) ||
-    startId - 1 === targetId ||
-    (startId - 2 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes()) ||
-    (startId - 3 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes()) ||
-    (startId - 4 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 3}`)?.hasChildNodes()) ||
-    (startId - 5 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 4}`)?.hasChildNodes()) ||
-    (startId - 6 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 5}`)?.hasChildNodes()) ||
-    (startId - 7 === targetId &&
-      !document.getElementById(`${startId - 1}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 2}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 3}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 4}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 5}`)?.hasChildNodes() &&
-      !document.getElementById(`${startId - 6}`)?.hasChildNodes())
-  ) {
+  const width = 8;
+  const dx = Math.abs((startId % width) - (targetId % width));
+  const dy = Math.abs(
+    Math.floor(startId / width) - Math.floor(targetId / width)
+  );
+
+  if (dx === 0 || dy === 0) {
+    let currentId;
+
+    if (dx > 0) {
+      if (startId > targetId) {
+        currentId = startId - 1;
+
+        while (currentId > targetId) {
+          if (document.getElementById(`${currentId}`).hasChildNodes()) {
+            return false;
+          }
+          currentId--;
+        }
+      } else if (targetId > startId) {
+        currentId = startId + 1;
+
+        while (currentId < targetId) {
+          if (document.getElementById(`${currentId}`).hasChildNodes()) {
+            return false;
+          }
+          currentId++;
+        }
+      }
+    }
+
+    if (dy > 0) {
+      if (startId > targetId) {
+        currentId = startId - width;
+
+        while (currentId > targetId) {
+          if (document.getElementById(`${currentId}`).hasChildNodes()) {
+            return false;
+          }
+          currentId -= width;
+        }
+      } else if (targetId > startId) {
+        currentId = startId + width;
+
+        while (currentId < targetId) {
+          if (document.getElementById(`${currentId}`).hasChildNodes()) {
+            return false;
+          }
+          currentId += width;
+        }
+      }
+    }
+
     return true;
-  } else {
-    return false;
   }
+
+  return false;
 }
 
 function queen(startId, targetId) {
@@ -1200,6 +1139,36 @@ function bishopPossibleMoves(startId) {
       }
 
       currentId += direction;
+    }
+  }
+  for (const move of possibleMoves) {
+    const selectSquare = document.getElementById(move);
+
+    if (selectSquare) {
+      const chessMan = selectSquare.querySelector(".chessMan");
+
+      if (chessMan) {
+        const chessManId = chessMan.getAttribute("id");
+
+        if (
+          (chessManId.includes("B") && playerTurn === "white") ||
+          (chessManId.includes("W") && playerTurn === "black")
+        ) {
+          selectSquare.classList.toggle("dead");
+        }
+      } else {
+        selectSquare.classList.toggle("move");
+      }
+    }
+  }
+}
+
+function rookPossibleMoves(startId) {
+  const possibleMoves = [];
+
+  for (let targetId = 0; targetId < 64; targetId++) {
+    if (rook(startId, targetId)) {
+      possibleMoves.push(targetId);
     }
   }
   for (const move of possibleMoves) {
