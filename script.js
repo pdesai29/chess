@@ -202,6 +202,7 @@ function handleDrop(e) {
     targetId
   );
   const validMove = checkValidMove(e.target);
+  console.log(validMove);
   if (!validMove) {
     movesObject.moveDetails[movesObject.moveDetails.length - 1].pop();
   }
@@ -260,8 +261,6 @@ function addMoveDetails(piece, deadPiece = "", startId, targetId) {
     moveDetails.push([{ piece, deadPiece, startId, targetId }]);
   } else {
     if (moveDetails[length - 1].length < 2) {
-      // console.log("moveDetails[length - 1]", moveDetails[length - 1]);
-      // console.log("moveDetails", moveDetails);
       moveDetails[length - 1].push({
         piece,
         deadPiece,
@@ -396,11 +395,20 @@ function checkValidMove(target) {
   }
 }
 function pawn(startId, targetId) {
+  console.log("current start", startId);
+  console.log("current end", targetId);
   const { moveDetails } = movesObject;
-  let lastMove =
+  let lastMove;
+  if (
+    moveDetails.length === 1 &&
     moveDetails[moveDetails.length - 1].length === 1
-      ? moveDetails[moveDetails.length - 1][0]
-      : moveDetails[moveDetails.length - 1][1];
+  ) {
+    lastMove = undefined;
+  } else if (moveDetails[moveDetails.length - 1].length === 2) {
+    lastMove = moveDetails[moveDetails.length - 1][0];
+  } else if (moveDetails[moveDetails.length - 1].length === 1) {
+    lastMove = moveDetails[moveDetails.length - 2][1];
+  }
   console.log("lastMove", lastMove);
   const starterRow = [8, 9, 10, 11, 12, 13, 14, 15];
   if (
@@ -414,28 +422,32 @@ function pawn(startId, targetId) {
   ) {
     return true;
   } else if (
-    (lastMove.piece === "pawnB" &&
-      starterRow.includes(lastMove.startId) &&
-      lastMove.startId + width * 2 === lastMove.targetId &&
-      (lastMove.targetId + 6 === startId ||
-        lastMove.targetId - 6 === startId)) ||
-    (startId + width - 1 === targetId &&
+    lastMove &&
+    lastMove.piece === "pawnB" &&
+    starterRow.includes(lastMove.startId) &&
+    lastMove.startId + width * 2 === lastMove.targetId &&
+    (lastMove?.targetId + 1 === 64 - startId - 1 ||
+      lastMove?.targetId - 1 === 64 - startId - 1) &&
+    ((startId + width - 1 === targetId &&
       !document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
-    (startId + width + 1 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes())
+      (startId + width + 1 === targetId &&
+        !document.getElementById(`${startId + width + 1}`)?.hasChildNodes()))
   ) {
+    console.log("enPassant black");
     return "enPassant";
   } else if (
-    (lastMove.piece === "pawnW" &&
-      starterRow.includes(lastMove.startId) &&
-      lastMove.startId + width * 2 === lastMove.targetId &&
-      (lastMove.targetId + 6 === startId ||
-        lastMove.targetId - 6 === startId)) ||
-    (startId + width - 1 === targetId &&
+    lastMove &&
+    lastMove.piece === "pawnW" &&
+    starterRow.includes(lastMove.startId) &&
+    lastMove.startId + width * 2 === lastMove.targetId &&
+    (lastMove?.targetId + 1 === 64 - startId - 1 ||
+      lastMove?.targetId - 1 === 64 - startId - 1) &&
+    ((startId + width - 1 === targetId &&
       !document.getElementById(`${startId + width - 1}`)?.hasChildNodes()) ||
-    (startId + width + 1 === targetId &&
-      !document.getElementById(`${startId + width + 1}`)?.hasChildNodes())
+      (startId + width + 1 === targetId &&
+        !document.getElementById(`${startId + width + 1}`)?.hasChildNodes()))
   ) {
+    console.log("enPassant white");
     return "enPassant";
   } else {
     return false;
