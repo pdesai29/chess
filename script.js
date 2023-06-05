@@ -182,7 +182,7 @@ let previousClick;
 function handleClick(e) {
   e.preventDefault();
   // console.log("inside click");
-  const squares = document.getElementsByClassName("square");
+  let squares = document.getElementsByClassName("square");
   if (e.target === previousClick) {
     for (const square of squares) {
       if (square.classList.contains("move")) {
@@ -192,7 +192,7 @@ function handleClick(e) {
         square.classList.toggle(".dead");
       }
       if (square.classList.contains("active")) {
-        square.classList.toggle("active");
+        square.classList.toggle(".active");
       }
     }
   } else {
@@ -225,6 +225,8 @@ function handleClick(e) {
       );
       changePlayerTurn();
     }
+    squares = document.getElementsByClassName("square");
+    console.log(squares);
     for (const square of squares) {
       if (square.classList.contains("move")) {
         square.classList.remove("move");
@@ -233,6 +235,7 @@ function handleClick(e) {
         square.classList.remove("dead");
       }
       if (square.classList.contains("active")) {
+        console.log("inside active");
         square.classList.remove("active");
       }
     }
@@ -288,6 +291,9 @@ function handleDrop(e) {
     }
     if (square.classList.contains("dead")) {
       square.classList.remove("dead");
+    }
+    if (square.classList.contains("active")) {
+      square.classList.remove("active");
     }
   }
 
@@ -370,8 +376,11 @@ function displayPossibleMoves(target) {
       (target.getAttribute("id").includes("W") && playerTurn === "white")
     )
   ) {
+    target.parentNode.classList.remove("active");
     return;
   }
+  target.parentNode.classList.toggle("active");
+
   const chessMan = target
     .getAttribute("id")
     .slice(0, target.getAttribute("id").length - 1);
