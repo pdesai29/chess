@@ -338,6 +338,7 @@ function displayPossibleMoves(target) {
     .getAttribute("id")
     .slice(0, target.getAttribute("id").length - 1);
   let possibleMoves;
+  console.log(chessMan);
   switch (chessMan) {
     case "pawn":
       return pawnPossibleMoves(startId);
@@ -345,15 +346,16 @@ function displayPossibleMoves(target) {
       return knightPossibleMoves(startId);
     case "bishop":
       possibleMoves = bishopPossibleMoves(startId);
-      renderMoves(possibleMoves);
+      return renderMoves(possibleMoves);
     case "rook":
       possibleMoves = rookPossibleMoves(startId);
-      renderMoves(possibleMoves);
+      return renderMoves(possibleMoves);
     case "queen":
       possibleMoves = queenPossibleMoves(startId);
-      renderMoves(possibleMoves);
-    // case "king":
-    //   kingPossibleMoves(startId);
+      return renderMoves(possibleMoves);
+    case "king":
+      possibleMoves = kingPossibleMoves(startId);
+      return renderMoves(possibleMoves);
   }
 }
 function moveDisplay(move, piece, deadPiece = "") {
@@ -666,21 +668,10 @@ function queen(startId, targetId) {
     return false;
   }
 }
+
 function king(startId, targetId) {
-  if (
-    startId + 1 === targetId ||
-    startId - 1 === targetId ||
-    startId + width === targetId ||
-    startId - width === targetId ||
-    startId + width + 1 === targetId ||
-    startId + width - 1 === targetId ||
-    startId - width + 1 === targetId ||
-    startId - width - 1 === targetId
-  ) {
-    return true;
-  } else {
-    return false;
-  }
+  const difference = Math.abs(startId - targetId);
+  return difference <= 9;
 }
 function knightPossibleMoves(startId) {
   const possibleMoves = [];
@@ -734,6 +725,40 @@ function knightPossibleMoves(startId) {
       }
     }
   }
+}
+
+function kingPossibleMoves(startId) {
+  const possibleMoves = [];
+  const moves = [
+    -width - 1,
+    -width,
+    -width + 1,
+    -1,
+    1,
+    width - 1,
+    width,
+    width + 1,
+  ];
+
+  for (const move of moves) {
+    const currentId = startId + move;
+    if (currentId >= 0 && currentId <= 63) {
+      const targetSquare = document.getElementById(`${currentId}`);
+      const chessMan = targetSquare.querySelector(".chessMan");
+      console.log(targetSquare);
+      if (
+        (targetSquare.hasChildNodes() &&
+          chessMan?.getAttribute("id").includes("W") &&
+          playerTurn === "black") ||
+        (chessMan?.getAttribute("id").includes("B") && playerTurn === "white")
+      ) {
+        possibleMoves.push(currentId);
+      } else {
+        possibleMoves.push(currentId);
+      }
+    }
+  }
+  return possibleMoves;
 }
 
 function pawnPossibleMoves(startId) {
@@ -844,7 +869,6 @@ function pawnPossibleMoves(startId) {
     }
   }
 }
-
 function bishopPossibleMoves(startId) {
   const width = 8;
   const possibleMoves = [];
@@ -872,6 +896,7 @@ function bishopPossibleMoves(startId) {
           ) {
             possibleMoves.push(currentId);
           }
+
           break;
         }
 
@@ -896,11 +921,13 @@ function rookPossibleMoves(startId) {
 
   return possibleMoves;
 }
+
 function queenPossibleMoves(startId) {
   const rookMoves = rookPossibleMoves(startId);
   const bishopMoves = bishopPossibleMoves(startId);
+  console.log(rookMoves);
+  console.log(bishopMoves);
   const queenMoves = rookMoves.concat(bishopMoves);
-  console.log(queenMoves);
   return queenMoves;
 }
 
