@@ -191,6 +191,9 @@ function handleClick(e) {
       if (square.classList.contains("dead")) {
         square.classList.toggle(".dead");
       }
+      if (square.classList.contains("active")) {
+        square.classList.toggle("active");
+      }
     }
   } else {
     const elem = e.target;
@@ -228,6 +231,9 @@ function handleClick(e) {
       }
       if (square.classList.contains("dead")) {
         square.classList.remove("dead");
+      }
+      if (square.classList.contains("active")) {
+        square.classList.remove("active");
       }
     }
   }
@@ -373,10 +379,12 @@ function displayPossibleMoves(target) {
   // console.log(chessMan);
   switch (chessMan) {
     case "pawn":
-      pawnPossibleMoves(startId);
+      possibleMoves = pawnPossibleMoves(startId);
+      renderMoves(possibleMoves);
       return;
     case "knight":
-      knightPossibleMoves(startId);
+      possibleMoves = knightPossibleMoves(startId);
+      renderMoves(possibleMoves);
       return;
     case "bishop":
       possibleMoves = bishopPossibleMoves(startId);
@@ -743,26 +751,7 @@ function knightPossibleMoves(startId) {
     }
   }
 
-  for (const move of possibleMoves) {
-    const selectSquare = document.getElementById(move);
-
-    if (selectSquare) {
-      const chessMan = selectSquare.querySelector(".chessMan");
-
-      if (chessMan) {
-        const chessManId = chessMan.getAttribute("id");
-
-        if (
-          (chessManId.includes("B") && playerTurn === "white") ||
-          (chessManId.includes("W") && playerTurn === "black")
-        ) {
-          selectSquare.classList.toggle("dead");
-        }
-      } else {
-        selectSquare.classList.toggle("move");
-      }
-    }
-  }
+  return possibleMoves;
 }
 
 function kingPossibleMoves(startId) {
@@ -783,7 +772,6 @@ function kingPossibleMoves(startId) {
     if (currentId >= 0 && currentId <= 63) {
       const targetSquare = document.getElementById(`${currentId}`);
       const chessMan = targetSquare.querySelector(".chessMan");
-      console.log(targetSquare);
       if (
         (targetSquare.hasChildNodes() &&
           chessMan?.getAttribute("id").includes("W") &&
@@ -800,113 +788,56 @@ function kingPossibleMoves(startId) {
 }
 
 function pawnPossibleMoves(startId) {
+  const possibleMoves = [];
   const selectSquare = document.getElementById(startId);
   const isBlack = selectSquare?.querySelector(".chessMan").id.includes("B");
-
-  // // Remove all existing move and dead classes
-
+  // const direction = isBlack ? 1 : -1;
   const starterRow = [8, 9, 10, 11, 12, 13, 14, 15];
+  const oneSquareForward = document.getElementById(startId + width);
+  const twoSquaresForward = document.getElementById(startId + width * 2);
+  const leftCapture = document.getElementById(startId + width - 1);
+  const rightCapture = document.getElementById(startId + width + 1);
 
-  if (isBlack) {
-    // Black pawn moves
-    const oneSquareForward = document.getElementById(startId + width);
-    const twoSquaresForward = document.getElementById(startId + width * 2);
-    const leftCapture = document.getElementById(startId + width - 1);
-    const rightCapture = document.getElementById(startId + width + 1);
+  if (oneSquareForward && !oneSquareForward.hasChildNodes()) {
+    possibleMoves.push(startId + width);
+  }
 
-    if (oneSquareForward && !oneSquareForward.hasChildNodes()) {
-      oneSquareForward.classList.toggle("move");
-    }
+  if (
+    twoSquaresForward &&
+    starterRow.includes(startId) &&
+    !twoSquaresForward.hasChildNodes() &&
+    !oneSquareForward.hasChildNodes()
+  ) {
+    possibleMoves.push(startId + width * 2);
+  }
+
+  if (leftCapture && leftCapture.hasChildNodes()) {
+    const chessManId = leftCapture
+      .querySelector(".chessMan")
+      .getAttribute("id");
     if (
-      twoSquaresForward &&
-      starterRow.includes(startId) &&
-      !twoSquaresForward.hasChildNodes() &&
-      !oneSquareForward.hasChildNodes()
+      (chessManId.includes("B") && playerTurn === "white") ||
+      (chessManId.includes("W") && playerTurn === "black")
     ) {
-      twoSquaresForward.classList.toggle("move");
-    }
-    if (leftCapture && leftCapture.hasChildNodes()) {
-      if (
-        (leftCapture
-          .querySelector(".chessMan")
-          .getAttribute("id")
-          .includes("B") &&
-          playerTurn === "white") ||
-        (leftCapture
-          .querySelector(".chessMan")
-          .getAttribute("id")
-          .includes("W") &&
-          playerTurn === "black")
-      )
-        // leftCapture.classList.toggle("move");
-        leftCapture.classList.toggle("dead");
-    }
-    if (rightCapture && rightCapture.hasChildNodes()) {
-      if (
-        (rightCapture
-          .querySelector(".chessMan")
-          .getAttribute("id")
-          .includes("B") &&
-          playerTurn === "white") ||
-        (rightCapture
-          .querySelector(".chessMan")
-          .getAttribute("id")
-          .includes("W") &&
-          playerTurn === "black")
-      )
-        // leftCapture.classList.toggle("move");
-        rightCapture.classList.toggle("dead");
-    }
-  } else {
-    // White pawn moves
-    const oneSquareForward = document.getElementById(startId + width);
-    const twoSquaresForward = document.getElementById(startId + width * 2);
-    const leftCapture = document.getElementById(startId + width - 1);
-    const rightCapture = document.getElementById(startId + width + 1);
-
-    if (oneSquareForward && !oneSquareForward.hasChildNodes()) {
-      oneSquareForward.classList.toggle("move");
-    }
-    if (
-      twoSquaresForward &&
-      starterRow.includes(startId) &&
-      !twoSquaresForward.hasChildNodes() &&
-      !oneSquareForward.hasChildNodes()
-    ) {
-      twoSquaresForward.classList.toggle("move");
-    }
-    if (leftCapture && leftCapture.hasChildNodes()) {
-      if (
-        (leftCapture
-          .querySelector(".chessMan")
-          .getAttribute("id")
-          .includes("B") &&
-          playerTurn === "white") ||
-        (leftCapture
-          .querySelector(".chessMan")
-          .getAttribute("id")
-          .includes("W") &&
-          playerTurn === "black")
-      )
-        leftCapture.classList.toggle("dead");
-    }
-    if (rightCapture && rightCapture.hasChildNodes()) {
-      if (
-        (rightCapture
-          .querySelector(".chessMan")
-          .getAttribute("id")
-          .includes("B") &&
-          playerTurn === "white") ||
-        (rightCapture
-          .querySelector(".chessMan")
-          .getAttribute("id")
-          .includes("W") &&
-          playerTurn === "black")
-      )
-        rightCapture.classList.toggle("dead");
+      possibleMoves.push(startId + width - 1);
     }
   }
+
+  if (rightCapture && rightCapture.hasChildNodes()) {
+    const chessManId = rightCapture
+      .querySelector(".chessMan")
+      .getAttribute("id");
+    if (
+      (chessManId.includes("B") && playerTurn === "white") ||
+      (chessManId.includes("W") && playerTurn === "black")
+    ) {
+      possibleMoves.push(startId + width + 1);
+    }
+  }
+
+  return possibleMoves;
 }
+
 function bishopPossibleMoves(startId) {
   const width = 8;
   const possibleMoves = [];
@@ -963,8 +894,7 @@ function rookPossibleMoves(startId) {
 function queenPossibleMoves(startId) {
   const rookMoves = rookPossibleMoves(startId);
   const bishopMoves = bishopPossibleMoves(startId);
-  console.log(rookMoves);
-  console.log(bishopMoves);
+
   const queenMoves = rookMoves.concat(bishopMoves);
   return queenMoves;
 }
