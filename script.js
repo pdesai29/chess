@@ -176,10 +176,12 @@ draggableSquares.forEach((element) => {
   element.addEventListener("drop", handleDrop);
   element.addEventListener("click", handleClick);
 });
+
 let previousClick;
+
 function handleClick(e) {
   e.preventDefault();
-
+  // console.log("inside click");
   const squares = document.getElementsByClassName("square");
   if (e.target === previousClick) {
     for (const square of squares) {
@@ -191,6 +193,35 @@ function handleClick(e) {
       }
     }
   } else {
+    const elem = e.target;
+    if (elem.getAttribute("class").includes("move")) {
+      const parentPrevious = previousClick.parentNode;
+
+      parentPrevious.removeChild(previousClick);
+      elem.appendChild(previousClick);
+      let move = `${elem.getAttribute("square-id")}`;
+
+      moveDisplay(
+        move,
+        previousClick.getAttribute("id"),
+        e.target.getAttribute("id")
+      );
+      changePlayerTurn();
+    } else if (elem.parentNode.getAttribute("class").includes("dead")) {
+      const parentPrevious = previousClick.parentNode;
+      const currentParent = elem.parentNode;
+      parentPrevious.removeChild(previousClick);
+      currentParent.removeChild(elem);
+      currentParent.appendChild(previousClick);
+      let move = `x${currentParent.getAttribute("square-id")}`;
+
+      moveDisplay(
+        move,
+        previousClick.getAttribute("id"),
+        e.target.getAttribute("id")
+      );
+      changePlayerTurn();
+    }
     for (const square of squares) {
       if (square.classList.contains("move")) {
         square.classList.remove("move");
@@ -200,6 +231,7 @@ function handleClick(e) {
       }
     }
   }
+
   if (e.target.hasChildNodes()) {
     displayPossibleMoves(e.target);
   } else {
@@ -325,7 +357,7 @@ function addMoveDetails(piece, deadPiece = "", startId, targetId) {
   }
 }
 function displayPossibleMoves(target) {
-  const startId = Number(target.parentNode.getAttribute("id"));
+  const startId = Number(target.parentNode?.getAttribute("id"));
   if (
     !(
       (target.getAttribute("id").includes("B") && playerTurn === "black") ||
@@ -338,24 +370,30 @@ function displayPossibleMoves(target) {
     .getAttribute("id")
     .slice(0, target.getAttribute("id").length - 1);
   let possibleMoves;
-  console.log(chessMan);
+  // console.log(chessMan);
   switch (chessMan) {
     case "pawn":
-      return pawnPossibleMoves(startId);
+      pawnPossibleMoves(startId);
+      return;
     case "knight":
-      return knightPossibleMoves(startId);
+      knightPossibleMoves(startId);
+      return;
     case "bishop":
       possibleMoves = bishopPossibleMoves(startId);
-      return renderMoves(possibleMoves);
+      renderMoves(possibleMoves);
+      return;
     case "rook":
       possibleMoves = rookPossibleMoves(startId);
-      return renderMoves(possibleMoves);
+      renderMoves(possibleMoves);
+      return;
     case "queen":
       possibleMoves = queenPossibleMoves(startId);
-      return renderMoves(possibleMoves);
+      renderMoves(possibleMoves);
+      return;
     case "king":
       possibleMoves = kingPossibleMoves(startId);
-      return renderMoves(possibleMoves);
+      renderMoves(possibleMoves);
+      return;
   }
 }
 function moveDisplay(move, piece, deadPiece = "") {
@@ -763,7 +801,7 @@ function kingPossibleMoves(startId) {
 
 function pawnPossibleMoves(startId) {
   const selectSquare = document.getElementById(startId);
-  const isBlack = selectSquare.querySelector(".chessMan").id.includes("B");
+  const isBlack = selectSquare?.querySelector(".chessMan").id.includes("B");
 
   // // Remove all existing move and dead classes
 
