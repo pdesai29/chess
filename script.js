@@ -3,87 +3,36 @@ let playerTurn = "black";
 const movesDiv = document.querySelector("#moves");
 const width = 8;
 const movesObject = { moves: [], moveDetails: [] };
-
+let check;
+let checkMate;
 const themes = document.querySelectorAll(".theme");
-let currentTheme = "greenTheme";
+let currentTheme = "blueTheme";
 const themesObject = {
   greenTheme: ["bgGreen", "bgSkin"],
   blueTheme: ["bgdBlue", "bglBlue"],
   classicTheme: ["bgBlack", "bgWhite"],
   pinkTheme: ["bgPink", "bgCream"],
 };
+
+// prettier-ignore
 const startPosition = [
-  rookB,
-  knightB,
-  bishopB,
-  queenB,
-  kingB,
-  bishopB,
-  knightB,
-  rookB,
-  pawnB,
-  pawnB,
-  pawnB,
-  pawnB,
-  pawnB,
-  pawnB,
-  pawnB,
-  pawnB,
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  pawnW,
-  pawnW,
-  pawnW,
-  pawnW,
-  pawnW,
-  pawnW,
-  pawnW,
-  pawnW,
-  rookW,
-  knightW,
-  bishopW,
-  queenW,
-  kingW,
-  bishopW,
-  knightW,
-  rookW,
+  rookB,knightB,bishopB,queenB,kingB,bishopB,knightB,rookB,
+  pawnB,pawnB,pawnB,pawnB,pawnB,pawnB,pawnB,pawnB,
+  "","","","","","","","",
+  "","","","","","","","",
+  "", "", "", "", "", "", "", "",
+  "","","","","","","","",
+  pawnW,pawnW,pawnW,pawnW,pawnW,pawnW,pawnW,pawnW,
+  rookW,knightW,bishopW,queenW,kingW,bishopW,knightW,rookW
 ];
+
 function addEventListenerTheme() {
   themes.forEach((elem) => {
     elem.addEventListener("click", changeTheme);
   });
 }
 addEventListenerTheme();
+
 function changeTheme(e) {
   const target = e.target.getAttribute("id");
   const squares = document.querySelectorAll(".square");
@@ -98,6 +47,7 @@ function changeTheme(e) {
   });
   currentTheme = target + "Theme";
 }
+
 function changePlayerTurn() {
   if (playerTurn === "black") {
     reverseBoard();
@@ -150,9 +100,9 @@ const setUpBoard = () => {
     square.setAttribute("id", i);
 
     if (row % 2 === 0) {
-      square.classList.add(i % 2 === 0 ? "bgSkin" : "bgGreen");
+      square.classList.add(i % 2 === 0 ? "bglBlue" : "bgdBlue");
     } else {
-      square.classList.add(i % 2 === 0 ? "bgGreen" : "bgSkin");
+      square.classList.add(i % 2 === 0 ? "bgdBlue" : "bglBlue");
     }
     square.innerHTML = chessMan;
     chessBoard.append(square);
@@ -183,61 +133,64 @@ function handleClick(e) {
   e.preventDefault();
   // console.log("inside click");
   let squares = document.getElementsByClassName("square");
-  if (e.target === previousClick) {
-    for (const square of squares) {
-      if (square.classList.contains("move")) {
-        square.classList.toggle(".move");
-      }
-      if (square.classList.contains("dead")) {
-        square.classList.toggle(".dead");
-      }
-      if (square.classList.contains("active")) {
-        square.classList.toggle(".active");
-      }
+  // on click on square toggles classes to show moves, if same element was clicked than toggles
+
+  const elem = e.target;
+  if (elem.getAttribute("class").includes("move")) {
+    const parentPrevious = previousClick.parentNode;
+    let move = `${elem.getAttribute("square-id")}`;
+    console.log(move);
+    addMoveDetails(
+      previousClick.getAttribute("id"),
+      elem.getAttribute("id"),
+      Number(parentPrevious.getAttribute("id")),
+      Number(elem.getAttribute("id")),
+      move
+    );
+    parentPrevious.removeChild(previousClick);
+    elem.appendChild(previousClick);
+    console.log(movesObject.moveDetails);
+
+    moveDisplay(
+      move,
+      previousClick.getAttribute("id"),
+      e.target.getAttribute("id")
+    );
+    changePlayerTurn();
+  } else if (elem.parentNode.getAttribute("class").includes("dead")) {
+    const parentPrevious = previousClick.parentNode;
+    const currentParent = elem.parentNode;
+    let move = `x${currentParent.getAttribute("square-id")}`;
+
+    addMoveDetails(
+      previousClick.getAttribute("id"),
+      elem.getAttribute("id"),
+      Number(parentPrevious.getAttribute("id")),
+      Number(elem.getAttribute("id")),
+      move
+    );
+    console.log(movesObject.moveDetails);
+    parentPrevious.removeChild(previousClick);
+    currentParent.removeChild(elem);
+    currentParent.appendChild(previousClick);
+
+    moveDisplay(
+      move,
+      previousClick.getAttribute("id"),
+      e.target.getAttribute("id")
+    );
+    changePlayerTurn();
+  }
+  squares = document.getElementsByClassName("square");
+  for (const square of squares) {
+    if (square.classList.contains("move")) {
+      square.classList.remove("move");
     }
-  } else {
-    const elem = e.target;
-    if (elem.getAttribute("class").includes("move")) {
-      const parentPrevious = previousClick.parentNode;
-
-      parentPrevious.removeChild(previousClick);
-      elem.appendChild(previousClick);
-      let move = `${elem.getAttribute("square-id")}`;
-
-      moveDisplay(
-        move,
-        previousClick.getAttribute("id"),
-        e.target.getAttribute("id")
-      );
-      changePlayerTurn();
-    } else if (elem.parentNode.getAttribute("class").includes("dead")) {
-      const parentPrevious = previousClick.parentNode;
-      const currentParent = elem.parentNode;
-      parentPrevious.removeChild(previousClick);
-      currentParent.removeChild(elem);
-      currentParent.appendChild(previousClick);
-      let move = `x${currentParent.getAttribute("square-id")}`;
-
-      moveDisplay(
-        move,
-        previousClick.getAttribute("id"),
-        e.target.getAttribute("id")
-      );
-      changePlayerTurn();
+    if (square.classList.contains("dead")) {
+      square.classList.remove("dead");
     }
-    squares = document.getElementsByClassName("square");
-    console.log(squares);
-    for (const square of squares) {
-      if (square.classList.contains("move")) {
-        square.classList.remove("move");
-      }
-      if (square.classList.contains("dead")) {
-        square.classList.remove("dead");
-      }
-      if (square.classList.contains("active")) {
-        console.log("inside active");
-        square.classList.remove("active");
-      }
+    if (square.classList.contains("active")) {
+      square.classList.remove("active");
     }
   }
 
@@ -249,7 +202,7 @@ function handleClick(e) {
   previousClick = e.target;
 }
 
-let startPositionId, draggedChessman;
+let startPositionId, draggedChessman, possibleMoves;
 
 function handleDragStart(e) {
   const squares = document.getElementsByClassName("square");
@@ -263,10 +216,60 @@ function handleDragStart(e) {
   }
   startPositionId = e.target.parentNode.getAttribute("id");
   draggedChessman = e.target;
+  possibleMoves = getPossibleMoves(draggedChessman);
 }
+
+function getPossibleMoves(target) {
+  const startId = Number(target.parentNode?.getAttribute("id"));
+  if (
+    !(
+      (target.getAttribute("id").includes("B") && playerTurn === "black") ||
+      (target.getAttribute("id").includes("W") && playerTurn === "white")
+    )
+  ) {
+    target.parentNode.classList.remove("active");
+    return;
+  }
+  target.parentNode.classList.toggle("active");
+
+  const chessMan = target
+    .getAttribute("id")
+    .slice(0, target.getAttribute("id").length - 1);
+  let possibleMoves;
+  // console.log(chessMan);
+  switch (chessMan) {
+    case "pawn":
+      possibleMoves = pawnPossibleMoves(startId);
+
+      return possibleMoves;
+    case "knight":
+      possibleMoves = knightPossibleMoves(startId);
+
+      return possibleMoves;
+    case "bishop":
+      possibleMoves = bishopPossibleMoves(startId);
+
+      return possibleMoves;
+    case "rook":
+      possibleMoves = rookPossibleMoves(startId);
+
+      return possibleMoves;
+    case "queen":
+      possibleMoves = queenPossibleMoves(startId);
+
+      return possibleMoves;
+    case "king":
+      possibleMoves = kingPossibleMoves(startId);
+
+      return possibleMoves;
+  }
+}
+
 function handleDragOver(e) {
   e.preventDefault();
 }
+
+// handleDrop
 function handleDrop(e) {
   e.stopPropagation();
   const correctPlayerTurn =
@@ -278,12 +281,6 @@ function handleDrop(e) {
     Number(e.target.getAttribute("id")) ||
     Number(e.target.parentNode.getAttribute("id"));
   const startId = Number(startPositionId);
-  addMoveDetails(
-    draggedChessman.getAttribute("id"),
-    e.target.getAttribute("id"),
-    startId,
-    targetId
-  );
   const squares = document.getElementsByClassName("square");
   for (const square of squares) {
     if (square.classList.contains("move")) {
@@ -296,65 +293,54 @@ function handleDrop(e) {
       square.classList.remove("active");
     }
   }
-
-  const validMove = checkValidMove(e.target);
-  // console.log(validMove);
-  if (!validMove) {
-    movesObject.moveDetails[movesObject.moveDetails.length - 1].pop();
-  }
+  addMoveDetails(
+    draggedChessman.getAttribute("id"),
+    e.target.getAttribute("id"),
+    startId,
+    targetId
+  );
   if (correctPlayerTurn) {
-    if (takenByOpponent && validMove) {
-      let move = `x${e.target.parentNode.getAttribute("square-id")}`;
-      let arr = movesObject.moveDetails[movesObject.moveDetails.length - 1];
-      arr[arr.length - 1][`move`] = move;
-      moveDisplay(
-        move,
-        draggedChessman.getAttribute("id"),
-        e.target.getAttribute("id")
-      );
-      e.target.parentNode.append(draggedChessman);
-      e.target.remove();
-      changePlayerTurn();
-      return;
-    }
-
-    if (taken && !takenByOpponent) {
-      console.log("can't go here");
-      return;
-    }
-
-    if (validMove) {
-      e.target.append(draggedChessman);
-      if (validMove === "enPassant") {
-        const deadPieceSquare = document.getElementById(`${targetId - width}`);
-        const deadPiece = deadPieceSquare.querySelector(".chessMan");
-        deadPieceSquare.removeChild(deadPiece);
-        let move = `x${deadPieceSquare.getAttribute("square-id")}`;
+    if (possibleMoves.includes(targetId)) {
+      if (takenByOpponent) {
+        let move = `x${e.target.parentNode.getAttribute("square-id")}`;
         let arr = movesObject.moveDetails[movesObject.moveDetails.length - 1];
         arr[arr.length - 1][`move`] = move;
         moveDisplay(
           move,
-          e.target.firstChild.getAttribute("id"),
-          deadPiece.getAttribute("id")
+          draggedChessman.getAttribute("id"),
+          e.target.getAttribute("id")
         );
+        e.target.parentNode.append(draggedChessman);
+        e.target.remove();
         changePlayerTurn();
         return;
       }
+      e.target.append(draggedChessman);
+
       let move = `${e.target.getAttribute("square-id")}`;
       let arr = movesObject.moveDetails[movesObject.moveDetails.length - 1];
       arr[arr.length - 1][`move`] = move;
       moveDisplay(move, e.target.firstChild.getAttribute("id"));
       changePlayerTurn();
       return;
+    } else {
+      movesObject.moveDetails[movesObject.moveDetails.length - 1].pop();
+      console.log("can't go here");
     }
   }
 }
 
-function addMoveDetails(piece, deadPiece = "", startId, targetId) {
+function addMoveDetails(
+  piece,
+  deadPiece = "",
+  startId = "",
+  targetId = "",
+  move = ""
+) {
   const { moveDetails } = movesObject;
   let length = moveDetails.length;
   if (!length) {
-    moveDetails.push([{ piece, deadPiece, startId, targetId }]);
+    moveDetails.push([{ piece, deadPiece, startId, targetId, move }]);
   } else {
     if (moveDetails[length - 1].length < 2) {
       moveDetails[length - 1].push({
@@ -362,9 +348,10 @@ function addMoveDetails(piece, deadPiece = "", startId, targetId) {
         deadPiece,
         startId,
         targetId,
+        move,
       });
     } else {
-      moveDetails.push([{ piece, deadPiece, startId, targetId }]);
+      moveDetails.push([{ piece, deadPiece, startId, targetId, move }]);
     }
   }
 }
@@ -379,6 +366,8 @@ function displayPossibleMoves(target) {
     target.parentNode.classList.remove("active");
     return;
   }
+
+  // console.log(movesObject.moveDetails);
   target.parentNode.classList.toggle("active");
 
   const chessMan = target
@@ -797,6 +786,20 @@ function kingPossibleMoves(startId) {
 }
 
 function pawnPossibleMoves(startId) {
+  const { moveDetails } = movesObject;
+  let lastMove;
+  const moveDetailsLength = moveDetails.length;
+  if (
+    moveDetails.length === 1 &&
+    moveDetails[moveDetailsLength - 1].length === 1
+  ) {
+    lastMove = undefined;
+  } else if (moveDetails[moveDetailsLength - 1]?.length === 2) {
+    lastMove = moveDetails[moveDetailsLength - 1][1];
+  } else if (moveDetails[moveDetailsLength - 1]?.length === 1) {
+    lastMove = moveDetails[moveDetailsLength - 1][0];
+  }
+  // console.log(lastMove);
   const possibleMoves = [];
   const selectSquare = document.getElementById(startId);
   const isBlack = selectSquare?.querySelector(".chessMan").id.includes("B");
@@ -844,44 +847,30 @@ function pawnPossibleMoves(startId) {
     }
   }
 
-  return possibleMoves;
-}
+  if (
+    lastMove &&
+    lastMove.piece === "pawnB" &&
+    playerTurn === "white" &&
+    starterRow.includes(lastMove.startId) &&
+    lastMove.startId + width * 2 === lastMove.targetId
+  ) {
+    if (63 - lastMove?.targetId === startId + 1) {
+      possibleMoves.push(63 - lastMove.targetId + 8);
+    } else if (63 - lastMove?.targetId === startId - 1) {
+      possibleMoves.push(63 - lastMove.targetId + 8);
+    }
+  }
 
-function bishopPossibleMoves(startId) {
-  const width = 8;
-  const possibleMoves = [];
-  const directions = [7, 9, -7, -9];
-  for (const direction of directions) {
-    let currentId = startId + direction;
-
-    while (currentId >= 0 && currentId <= 63) {
-      const dx = Math.abs((startId % width) - (currentId % width));
-      const dy = Math.abs(
-        Math.floor(startId / width) - Math.floor(currentId / width)
-      );
-
-      if (dy === dx) {
-        const possibleMoveSquare = document.getElementById(`${currentId}`);
-
-        if (possibleMoveSquare?.hasChildNodes()) {
-          const chessManId = possibleMoveSquare
-            .querySelector(".chessMan")
-            .getAttribute("id");
-
-          if (
-            (chessManId.includes("B") && playerTurn === "white") ||
-            (chessManId.includes("W") && playerTurn === "black")
-          ) {
-            possibleMoves.push(currentId);
-          }
-
-          break;
-        }
-
-        possibleMoves.push(currentId);
-      }
-
-      currentId += direction;
+  if (
+    lastMove &&
+    lastMove.piece === "pawnW" &&
+    starterRow.includes(lastMove.startId) &&
+    lastMove.startId + width * 2 === lastMove.targetId
+  ) {
+    if (63 - lastMove?.targetId === startId + 1) {
+      possibleMoves.push(63 - lastMove.targetId + 8);
+    } else if (63 - lastMove?.targetId === startId - 1) {
+      possibleMoves.push(63 - lastMove.targetId + 8);
     }
   }
 
@@ -911,17 +900,21 @@ function queenPossibleMoves(startId) {
 function renderMoves(possibleMoves) {
   for (const move of possibleMoves) {
     const selectSquare = document.getElementById(move);
-
+    console.log(selectSquare);
     if (selectSquare) {
       const chessMan = selectSquare.querySelector(".chessMan");
-
+      console.log(chessMan);
       if (chessMan) {
         const chessManId = chessMan.getAttribute("id");
-
+        console.log(chessManId);
         if (
           (chessManId.includes("B") && playerTurn === "white") ||
           (chessManId.includes("W") && playerTurn === "black")
         ) {
+          if (chessManId.includes("king")) {
+            check = true;
+            console.log(check);
+          }
           selectSquare.classList.toggle("dead");
         }
       } else {
@@ -929,4 +922,44 @@ function renderMoves(possibleMoves) {
       }
     }
   }
+}
+function bishopPossibleMoves(startId) {
+  const width = 8;
+  const possibleMoves = [];
+  const directions = [7, 9, -7, -9];
+
+  for (const direction of directions) {
+    let currentId = startId + direction;
+
+    while (currentId >= 0 && currentId <= 63) {
+      const dx = Math.abs((startId % width) - (currentId % width));
+      const dy = Math.abs(
+        Math.floor(startId / width) - Math.floor(currentId / width)
+      );
+
+      if (dy === dx) {
+        const possibleMoveSquare = document.getElementById(`${currentId}`);
+
+        if (possibleMoveSquare?.hasChildNodes()) {
+          const chessManId = possibleMoveSquare
+            .querySelector(".chessMan")
+            .getAttribute("id");
+
+          if (
+            (chessManId.includes("B") && playerTurn === "white") ||
+            (chessManId.includes("W") && playerTurn === "black")
+          ) {
+            possibleMoves.push(currentId);
+          }
+          break;
+        }
+
+        possibleMoves.push(currentId);
+      }
+
+      currentId += direction;
+    }
+  }
+
+  return possibleMoves;
 }
